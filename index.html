@@ -47,24 +47,15 @@
         .btn-large {
             background-color: #338968;
         }
+        
+        .brand-logo {
+            margin-left: 40px;
+        }
     </style>
 
 </head>
 
 <body>
-    <nav id="nav" style="display:none;">
-        <div class="nav-wrapper">
-            <a href="#" class="brand-logo" id="sessionInfo">EOS Msg</a>
-            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-            <ul class="right hide-on-med-and-down">
-                <li><a href="/logout">Sair</a></li>
-            </ul>
-            <ul class="side-nav" id="mobile-demo">
-                <li><a href="/logout">Sair</a></li>
-            </ul>
-        </div>
-    </nav>
-
     <div id="content" class="container">
 
         <!-- Setup -->
@@ -128,7 +119,34 @@
 
         <!-- Contacts -->
         <div class="view" id="contactsView" style="display:none;">
-            <h1>Contacts</h1>
+            <h3>Contacts</h3>
+
+            <div class="collection" id="listContacts">
+                <!-- <a href="#!" class="collection-item">Alvin</a> -->
+            </div>
+
+            <div class="fixed-action-btn">
+                <a class="btn-floating btn-large waves-effect waves-light red modal-trigger" href="#addContactModal">
+                    <i class="large material-icons">add</i>
+                </a>
+            </div>
+
+            <!-- Modal Structure -->
+            <div id="addContactModal" class="modal">
+                <div class="modal-content">
+                    <h4>New Contact</h4>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="inputNewContact" type="text" class="validate">
+                            <label for="inputNewContact">Account name</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:addNewContact()" class="modal-close waves-effect waves-green btn-flat">Add</a>
+                </div>
+            </div>
+
         </div>
 
         <!-- Conversation -->
@@ -159,11 +177,23 @@
             ///onClose: function(el) { /* Do Stuff* / }, // A function to be called when sideNav is closed
         });
 
+        $('#addContactModal').modal();
+        loadTables();
         initApp();
     });
 </script>
 
 <script>
+    //// Navigation //////////
+    var tbContacts = [];
+
+    function loadTables() {
+        var strTbContacts = localStorage.getItem("tbContacts");
+        tbContacts = JSON.parse(strTbContacts);
+        if (tbContacts == null)
+            tbContacts = [];
+    }
+
     //// Navigation //////////
     function initApp() {
         if (typeof(Storage) !== "undefined") {
@@ -204,7 +234,7 @@
     eos = Eos({
         httpEndpoint: 'http://192.168.0.105:8800',
         chainId: chain.sysnet,
-        verbose: true
+        verbose: false
     });
 
     //////////////// EVENTS  ///////////////
@@ -294,9 +324,43 @@
             return;
         }
 
+        writeListContacts();
+        ///loadContacts();
         gotoView("contactsView");
     }
     $("#unlockButton").on("click", handleUnlock);
+
+    function writeListContacts() {
+        $("#listContacts").html("");
+
+        for (var i in tbContacts) {
+            var con = JSON.parse(tbContacts[i]);
+
+            $("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "<span class='new badge red'>4</span><span class='new badge blue'>4</span></a>");
+        }
+    }
+
+    function addNewContact() {
+        var name = $("#inputNewContact").val();
+        $("#inputNewContact").val("");
+
+        eos.getAccount(name)
+            .then(res => {
+                var contact = JSON.stringify({
+                    Name: name,
+                });
+                tbContacts.push(contact);
+                localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+
+                writeListContacts();
+
+            })
+            .catch(err => {
+                M.toast({
+                    html: 'Account name not found!'
+                });
+            })
+    }
 </script>
 
 
