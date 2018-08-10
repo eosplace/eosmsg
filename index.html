@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=480, maximum-scale=1.0, target-densitydpi=device-dpi">
+    <title>EOSMsg</title>
+    <!-- <link rel="shortcut icon" href="favicon.ico"> -->
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+
+    <!--Import Google Icon Font-->
+    <style>
+        /* fallback */
+        
+        @font-face {
+            font-family: 'Material Icons';
+            font-style: normal;
+            font-weight: 400;
+            src: url(/fonts/fontsdownloads.woff2) format('woff2');
+        }
+        
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -moz-font-feature-settings: 'liga';
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        nav {
+            background-color: #215968;
+        }
+        
+        .btn,
+        .btn-large {
+            background-color: #338968;
+        }
+    </style>
+
+</head>
+
+<body>
+    <nav id="nav" style="display:none;">
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo" id="sessionInfo">EOS Msg</a>
+            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="/logout">Sair</a></li>
+            </ul>
+            <ul class="side-nav" id="mobile-demo">
+                <li><a href="/logout">Sair</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="content" class="container">
+
+        <!-- Setup -->
+        <div class="view" id="setupView" style="display:none;">
+            <h1>Setup</h1>
+
+            <div class="row">
+                <form class="col s12">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="keypriv" type="password" class="validate">
+                            <label for="keypriv">Private Key</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input disabled id="keypub" type="text" class="validate">
+                            <label for="keypub">Public Key</label>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="pass1" type="password" class="validate">
+                            <label for="pass1">Password</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="pass2" type="password" class="validate">
+                            <label for="pass2">Password again</label>
+                        </div>
+                    </div>
+                </form>
+                <button id="setupButton" class="btn waves-effect waves-light" name="action">Submit
+                    <i class="material-icons right">send</i>
+                  </button>
+            </div>
+
+        </div>
+
+        <!-- Unlock -->
+        <div class="view" id="unlockView" style="display:none;">
+            <h1>Unlock</h1>
+        </div>
+
+        <!-- Contacts -->
+        <div class="view" id="contactsView" style="display:none;">
+            <h1>Contacts</h1>
+        </div>
+
+        <!-- Conversation -->
+        <div class="view" id="conversationView" style="display:none;">
+            <h1>Conversation</h1>
+        </div>
+
+        <!-- No storage -->
+        <div class="view" id="noStorageView" style="display:none;">
+            <h3>Storage is not supported by you browser. Sorry!</h3>
+        </div>
+    </div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eosjs@16.0.0/lib/eos.min.js" integrity="sha512-vNyLnOEb7uFmEtVbLnyZQ9/k4zckM2Vu3jJOKq6XfWEVZG0yKcjDExVN4EQ7e3F+rePWRncMolI2xFi/3qo62A==" crossorigin="anonymous"></script>
+
+
+<script>
+    $(document).ready(function() {
+        $('.button-collapse').sidenav({
+            ///menuWidth: 300, // Default is 300
+            ///edge: 'right', // Choose the horizontal origin
+            closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+            draggable: true, // Choose whether you can drag to open on touch screens,
+            ///onOpen: function(el) { /* Do Stuff* / }, // A function to be called when sideNav is opened
+            ///onClose: function(el) { /* Do Stuff* / }, // A function to be called when sideNav is closed
+        });
+
+        initApp();
+    });
+</script>
+
+<!-- Google Analytics -->
+<script>
+    window.ga = window.ga || function() {
+        (ga.q = ga.q || []).push(arguments)
+    };
+    ga.l = +new Date;
+    ga('create', 'UA-110066767-1', 'auto');
+    ga('send', 'pageview');
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+<!-- End Google Analytics -->
+
+<script>
+    //// Navigation //////////
+    function initApp() {
+        if (typeof(Storage) !== "undefined") {
+            var eoskeyenc = localStorage.getItem("eoskeyenc");
+            if (eoskeyenc == null) {
+                gotoView("setupView");
+            } else {
+                gotoView("unlockView");
+            }
+        } else {
+            gotoView("noStorageView");
+        }
+    }
+
+    function gotoView(view) {
+        $(".view").hide();
+        $("#" + view).show();
+    }
+
+
+    //// EOS ////////////
+    var {
+        format,
+        api,
+        ecc,
+        json,
+        Fcbuffer
+    } = Eos.modules;
+
+    chain = {
+        mainnet: 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906',
+        testnet: '038f4b0fc8ff18a4f0842a8f0564611f6e96e8535901dd45e43ac8691a1c4dca',
+        sysnet: 'cf057bbfb72640471fd910bcb67639c22df9f92470936cddc1ade0e2f2e7dc4f'
+    };
+
+    /**
+      Other httpEndpoint's: https://www.eosdocs.io/resources/apiendpoints
+    */
+    eos = Eos({
+        httpEndpoint: 'http://192.168.0.105:8800',
+        chainId: chain.sysnet,
+        verbose: true
+    });
+
+    //////////////// EVENTS  ///////////////
+    function goodPassword(pw) {
+        if (pw.length < 8) return false;
+    }
+
+    $("#keypriv").blur(function() {
+        var eoskeypriv = $("#keypriv").val();
+        if (!ecc.isValidPrivate(eoskeypriv)) {
+            $("#keypriv").val("");
+            $("#keypub").val("");
+
+            M.toast({
+                html: 'Invalid Private Key!'
+            });
+            return;
+        }
+
+        var eoskeypub = ecc.privateToPublic(eoskeypriv);
+        $("#keypub").val(eoskeypub);
+        M.updateTextFields();
+    });
+
+    $("#setupButton").on("click", function() {
+        var eoskeypriv = $("#keypriv").val();
+        var eoskeypub = $("#keypub").val();
+        var pass1 = $("#pass1").val();
+        var pass2 = $("#pass2").val();
+
+        if (!ecc.isValidPrivate(eoskeypriv)) {
+            $("#keypriv").val("");
+            $("#keypub").val("");
+
+            M.toast({
+                html: 'Invalid Private Key!'
+            });
+            return;
+        }
+
+        if (pass1 != pass2) {
+            $("#pass1").val("");
+            $("#pass2").val("");
+
+            M.toast({
+                html: 'Passwords not match!'
+            });
+            return;
+        }
+
+        if (!goodPassword(pass1)) {
+            $("#pass1").val("");
+            $("#pass2").val("");
+
+            M.toast({
+                html: 'Weak password!'
+            });
+            return;
+        }
+
+        gotoView("contactsView");
+    });
+</script>
+
+</html>
