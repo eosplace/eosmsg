@@ -268,11 +268,16 @@
     /**
       Other httpEndpoint's: https://www.eosdocs.io/resources/apiendpoints
     */
-    eos = Eos({
+    eosconfig = {
         httpEndpoint: 'http://192.168.0.105:8800',
         chainId: chain.sysnet,
-        verbose: false
-    });
+        broadcast: true,
+        keyProvider: "",
+        verbose: false,
+    };
+
+    var contract_account = "eosmsg";
+    eos = Eos(eosconfig);
 
     //////////////// EVENTS  ///////////////
     function goodPassword(pw) {
@@ -363,8 +368,10 @@
             return;
         }
 
+        eosconfig.keyProvider = eoskeypriv;
+        eos = Eos(eosconfig);
+
         writeListContacts();
-        ///loadContacts();
         gotoView("contactsView");
     }
     $("#unlockButton").on("click", handleUnlock);
@@ -408,9 +415,13 @@
             })
     }
 
+
+    var currentTo = "";
+
     function openConversation(id) {
         var contact = JSON.parse(tbContacts[id]);
         $("#conversationTitle").html("Conversation with " + contact.Name);
+        currentTo = contact.Name;
         gotoView("conversationView");
     }
 
@@ -418,16 +429,31 @@
         var text = $("#inputSend").val();
 
         if (text.length > 0) {
-            $("#listMessages").prepend(
-                "<div class='row'>" +
-                "   <div class='col s6 m6 offset-s6 offset-m6'> " +
-                "                <div class='card-panel'>" +
-                "                    <span class='black-text'>" + text + "</span>" +
-                "                </div>" +
-                "            </div>" +
-                "        </div>");
+            eos.contract(contract_account).then(contract =>
+                contract.sendmsg({
+                    from: accountname,
+                    to: currentTo,
+                    msg: text,
+                }, {
+                    authorization: accountname
+                })).then(function() {
+                $("#listMessages").prepend(
+                    "<div class='row'>" +
+                    "   <div class='col s6 m6 offset-s6 offset-m6'> " +
+                    "                <div class='card-panel'>" +
+                    "                    <span class='black-text'>" + text + "</span>" +
+                    "                </div>" +
+                    "   </div>" +
+                    "</div>");
 
-            $("#inputSend").val("");
+                $("#inputSend").val("");
+            }).catch(function(exception) {
+                if (exception) {
+                    M.toast({
+                        html: exception
+                    });
+                }
+            })
         }
     });
 </script>

@@ -50,7 +50,7 @@ public:
       n.to = to;
     });
 
-    message_table messages(from, _self);    
+    message_table messages(_self, from);    
     uint64_t newid = messages.available_primary_key();
     messages.emplace(from, [&](auto &m) {
       m.id = newid;
