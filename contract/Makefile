@@ -1,10 +1,10 @@
 all: compile abi
 
-compile: game.cpp
-	eosiocpp -o contract.wast game.cpp ../../common/mydate.cpp
+compile: contract.cpp
+	eosiocpp -o contract.wast contract.cpp 
 
-abi: game.cpp
-	eosiocpp -g contract.abi game.cpp
+abi: contract.cpp
+	eosiocpp -g contract.abi contract.cpp
 
 clean:
 	rm -f *~ *.o *.wast *.abi *.wasm
