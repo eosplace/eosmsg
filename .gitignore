@@ -1,2 +1,6 @@
 *~
+*.wast
+*.wasm
+*.wallet
+*.log
 
