@@ -42,6 +42,8 @@ public:
 
     eosio_assert(msg.size() > 0, "Empty message");
 
+    // verificar se account "to" existe
+
     notification_table notifications(_self, _self);
     uint64_t idnot = notifications.available_primary_key();
     notifications.emplace(from, [&](auto &n) {
@@ -89,10 +91,11 @@ private:
     std::string text;
     eosio::time_point_sec send_at;
     uint64_t id_notif;
+    uint8_t type;
 
     uint64_t primary_key() const { return id; }
 
-    EOSLIB_SERIALIZE(message, (id)(to)(text)(send_at)(id_notif))
+    EOSLIB_SERIALIZE(message, (id)(to)(text)(send_at)(id_notif)(type))
   };
   typedef eosio::multi_index<N(message), message> message_table;
 
