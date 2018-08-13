@@ -448,6 +448,25 @@
             })
         }
     });
+
+    function getMessageToMe() {
+        eos.getTableRows({
+            "json": true,
+            "scope": "eosmsg",
+            "code": "eosmsg",
+            "table": "notification",
+            "limit": 500,
+            "key_type": "name",
+            "index_position": 2,
+            "lower_bound": accountname,
+        }).then(result => {
+            console.log(result);
+        }).catch(function(exception) {
+            if (exception) {
+                alert(exception);
+            }
+        });
+    }
 </script>
 
 

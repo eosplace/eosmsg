@@ -45,40 +45,60 @@ public:
     // verificar se account "to" existe
 
     notification_table notifications(_self, _self);
-    uint64_t idnot = notifications.available_primary_key();
+    message_table messages(_self, from);    
+    
+    uint64_t newid = notifications.available_primary_key();
+
     notifications.emplace(from, [&](auto &n) {
-      n.id = idnot;
+      n.id = newid;
       n.from = from;
       n.to = to;
     });
 
-    message_table messages(_self, from);    
-    uint64_t newid = messages.available_primary_key();
     messages.emplace(from, [&](auto &m) {
       m.id = newid;
       m.to = to;
       m.text = msg;
       m.send_at = eosio::time_point_sec(now());
-      m.id_notif = idnot;
     });
   }
 
   //@abi action
-  void receivemsg(const account_name to, uint64_t idmsg)
+  void receivemsg(const account_name to, uint64_t id)
   {
     require_auth(to);
+
+    notification_table notifications(_self, _self);
+    auto itr_notif = notifications.find(id);
+    eosio_assert(itr_notif != notifications.end(), "Notification not found");
+    const auto &notif = *itr_notif;
+    eosio_assert(notif.to != to, "Message not to your account");
+    
+    message_table messages(_self, notif.from);    
+    auto itr_msg = messages.find(id);
+    eosio_assert(itr_msg != messages.end(), "Message not found");
+    
+    notifications.erase(itr_notif);
+    messages.erase(itr_msg);
   }
 
   //@abi action
-  void releasemsgs(const account_name from)
+  void erasemsg(const account_name from, uint64_t id)
   {
     require_auth(from);
-  }
 
-  //@abi action
-  void erasemsg(const account_name from, uint64_t idmsg)
-  {
-    require_auth(from);
+    notification_table notifications(_self, _self);
+    auto itr_notif = notifications.find(id);
+    eosio_assert(itr_notif != notifications.end(), "Notification not found");
+    const auto &notif = *itr_notif;
+    eosio_assert(notif.from != from, "Message not from your account");
+    
+    message_table messages(_self, from);
+    auto itr_msg = messages.find(id);
+    eosio_assert(itr_msg != messages.end(), "Message not found");
+    
+    notifications.erase(itr_notif);
+    messages.erase(itr_msg);
   }
 
 private:
@@ -90,12 +110,11 @@ private:
     account_name to;
     std::string text;
     eosio::time_point_sec send_at;
-    uint64_t id_notif;
     uint8_t type;
 
     uint64_t primary_key() const { return id; }
 
-    EOSLIB_SERIALIZE(message, (id)(to)(text)(send_at)(id_notif)(type))
+    EOSLIB_SERIALIZE(message, (id)(to)(text)(send_at)(type))
   };
   typedef eosio::multi_index<N(message), message> message_table;
 
@@ -122,4 +141,5 @@ private:
 
 };
 
-EOSIO_ABI(messenger, (sendmsg)(receivemsg)(releasemsgs)(erasemsg))
+EOSIO_ABI(messenger, (sendmsg)(receivemsg)(erasemsg))
+
