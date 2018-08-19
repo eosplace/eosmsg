@@ -363,6 +363,7 @@
         eosconfig.keyProvider = eoskeypriv;
         eos = Eos(eosconfig);
 
+	///setTimeout(getMessagesToMe, 5000);
         writeListContacts();
         gotoView("contactsView");
     }
@@ -449,7 +450,7 @@
         }
     });
 
-    function getMessageToMe() {
+    function getMessagesToMe() {
         eos.getTableRows({
             "json": true,
             "scope": "eosmsg",
@@ -461,12 +462,30 @@
             "lower_bound": accountname,
         }).then(result => {
             console.log(result);
+	    $.each(result.rows, function(index,value) {
+		    if (result.rows[index].to == accountname) {
+			    console.log("Receiving " + result.rows[index].id);
+			    eos.contract(contract_account).then(contract =>
+					    contract.receivemsg({
+						    to: accountname,
+						    id: result.rows[idmsg].id,
+					    }, {
+						    authorization: accountname
+					    })).then(function() {
+				    console.log("ok");
+			    });
+		    }
+	    });
+
         }).catch(function(exception) {
             if (exception) {
                 alert(exception);
             }
         });
+
+	///setTimeout(getMessagesToMe, 5000);
     }
+        
 </script>
 
 

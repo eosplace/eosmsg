@@ -3,4 +3,4 @@
 *.wasm
 *.wallet
 *.log
-
+*.swp

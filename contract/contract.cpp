@@ -72,7 +72,8 @@ public:
     auto itr_notif = notifications.find(id);
     eosio_assert(itr_notif != notifications.end(), "Notification not found");
     const auto &notif = *itr_notif;
-    eosio_assert(notif.to != to, "Message not to your account");
+    
+    eosio_assert(notif.to == to, "Message not to your account");
     
     message_table messages(_self, notif.from);    
     auto itr_msg = messages.find(id);
@@ -91,7 +92,8 @@ public:
     auto itr_notif = notifications.find(id);
     eosio_assert(itr_notif != notifications.end(), "Notification not found");
     const auto &notif = *itr_notif;
-    eosio_assert(notif.from != from, "Message not from your account");
+
+    eosio_assert(notif.from == from, "Message not from your account");
     
     message_table messages(_self, from);
     auto itr_msg = messages.find(id);
