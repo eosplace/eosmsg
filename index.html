@@ -220,7 +220,7 @@
         tbContacts = JSON.parse(strTbContacts);
         if (tbContacts == null)
             tbContacts = [];
-
+	
         accountname = localStorage.getItem("accountname");
     }
 
@@ -250,7 +250,7 @@
         $("#listMessages").html("");
 
         for (var i in tbContacts) {
-           var con = JSON.parse(tbContacts[i]);
+           var con = tbContacts[i];
 	   if (con.Name == currentTo) {
 	       for (var m in con.Messages) {
                    $("#listMessages").prepend(
@@ -415,7 +415,7 @@
         $("#listContacts").html("");
 
         for (var i in tbContacts) {
-            var con = JSON.parse(tbContacts[i]);
+            var con = tbContacts[i];
 
             $("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "<span class='new badge red'>4</span><span class='new badge blue'>4</span></a>");
         }
@@ -458,7 +458,7 @@
     var currentTo = "";
 
     function openConversation(id) {
-        var contact = JSON.parse(tbContacts[id]);
+        var contact = tbContacts[id];
         currentTo = contact.Name;
         gotoView("conversationView");
     }
@@ -468,14 +468,15 @@
 
         if (text.length > 0) {
                 for (var i in tbContacts) {
-                   var con = JSON.parse(tbContacts[i]);
+                   var con = tbContacts[i];
 		   if (con.Name == currentTo) {
 			   con.Messages.push({
 				   content: text,
 				   createdat: Date.now(),
+				   to: currentTo,
 				   state: "tosend",
 			   });
-			   tbContacts[i] = JSON.stringify(con);
+			   tbContacts[i] = con;
                            localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
 			   break;
 		   }
@@ -494,31 +495,57 @@
         }
     });    
 
+    function processMessageToSend(idxcon, idxmsg) {
+	console.log("STATUS: tosend - " + idxcon, idxmsg);
+            
+	var con = tbContacts[idxcon];
+	var msg = con.Messages[idxmsg];
+
+        eos.contract(contract_account).then(contract =>
+           contract.sendmsg({
+              from: accountname,
+              to: currentTo,
+              msg: msg.content,
+           }, {
+              authorization: accountname
+           })).then(function() {
+		console.log("OK");
+	        tbContacts[idxcon].Messages[idxmsg].state = "sent";
+
+                localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+           }).catch(function(exception) {
+	      console.log(exception);
+                /*if (exception) {
+                    M.toast({
+                        html: exception
+                    });
+                }*/
+            });
+   }
+
     function processMessage() {
 	console.log("processMessage");
 	loadGlobals();
 
         for (var i in tbContacts) {
-            var con = JSON.parse(tbContacts[i]);
-
+            var con = tbContacts[i];
+	    for (var m in con.Messages) {
+	       var msg = con.Messages[m];
+	       
+	       switch(msg.state) {
+		  case "tosend":
+			  processMessageToSend(i, m);
+			  break;
+		  case "read":
+			  console.log("STATUS: read - " + msg.content);
+			  break;
+		  default:
+			  console.log(msg.createdat);
+	       }
+	    }
         }
 
-	setTimeout(processMessage, 1000);
-/*            eos.contract(contract_account).then(contract =>
-                contract.sendmsg({
-                    from: accountname,
-                    to: currentTo,
-                    msg: text,
-                }, {
-                    authorization: accountname
-                })).then(function() {*/
-/*            }).catch(function(exception) {
-                if (exception) {
-                    M.toast({
-                        html: exception
-                    });
-                }
-            })*/
+	///setTimeout(processMessage, 1000);
     }
 
     function getMessagesToMe() {
