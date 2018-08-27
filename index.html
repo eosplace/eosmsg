@@ -157,6 +157,7 @@
 
         <!-- Conversation -->
         <div class="view" id="conversationView" style="display:none;">
+	    <br/>
  	    <a class="waves-effect waves-light btn-small" id="btnConversationBack">Back</a>
             <h5 id="conversationTitle">Conversation</h5>
 
@@ -246,21 +247,12 @@
            var con = tbContacts[i];
 	   if (con.Name == currentTo) {
 	       for (var m in con.Messages) {
-                   if (con.Messages[m].state == "notify")
-			   continue;
+                   ///if (con.Messages[m].state == "notify")
+		   ///	   continue;
                    
-		   if (con.Messages[m].state == "read" || con.Messages[m].state == "received") {
+	       switch(con.Messages[m].state) {
+		  case "tosend":
                       $("#listMessages").prepend(
-                      "<div class='row'>" +
-                      "   <div class='col s6 m6'> " +
-                      "          <div class='card-panel teal'> " +
-                      "               <span class='white-text'>" + con.Messages[m].content + "</span> " +
-                      "          </div>"+
-                      "  </div>"+
-                      "</div>");
-
-		   } else {
-                   $("#listMessages").prepend(
                       "<div class='row'>" +
                       "   <div class='col s6 m6 offset-s6 offset-m6'> " +
                       "                <div class='card-panel purple'>" +
@@ -268,7 +260,53 @@
                       "                </div>" +
                       "   </div>" +
                       "</div>");
-		   }
+			  break;
+		  case "sent":
+                      $("#listMessages").prepend(
+                      "<div class='row'>" +
+                      "   <div class='col s6 m6 offset-s6 offset-m6'> " +
+                      "                <div class='card-panel indigo'>" +
+                      "                    <span class='black-text'>" + con.Messages[m].content + "</span>" +
+                      "                </div>" +
+                      "   </div>" +
+                      "</div>");
+			  break;
+		  case "erased":
+                      $("#listMessages").prepend(
+                      "<div class='row'>" +
+                      "   <div class='col s6 m6 offset-s6 offset-m6'> " +
+                      "                <div class='card-panel red'>" +
+                      "                    <span class='black-text'>" + con.Messages[m].content + "</span>" +
+                      "                </div>" +
+                      "   </div>" +
+                      "</div>");
+			  break;
+		  case "read":
+                      $("#listMessages").prepend(
+                      "<div class='row'>" +
+                      "   <div class='col s6 m6'> " +
+                      "          <div class='card-panel lime'> " +
+                      "               <span class='white-text'>" + con.Messages[m].content + "</span> " +
+                      "          </div>"+
+                      "  </div>"+
+                      "</div>");
+			  break;
+		  case "notify":
+			  break;
+		  case "received":
+                      $("#listMessages").prepend(
+                      "<div class='row'>" +
+                      "   <div class='col s6 m6'> " +
+                      "          <div class='card-panel green'> " +
+                      "               <span class='white-text'>" + con.Messages[m].content + "</span> " +
+                      "          </div>"+
+                      "  </div>"+
+                      "</div>");
+			  break;
+		  default:
+			  console.log("DEFAULT render");
+	       }
+
 	       } 
 	       break;
 	   }
