@@ -462,8 +462,13 @@
 
         for (var i in tbContacts) {
             var con = tbContacts[i];
+	    var unread = tbContacts[i].unread;
 
-            $("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "<!--span class='new badge red'>4</span><span class='new badge blue'>4</span--> </a>");
+	    if (unread == undefined) { 
+               $("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "<!--span class='new badge red'>4</span><span class='new badge blue'>4</span--> </a>");
+	    } else {
+               $("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "<span class='new badge red'>" + unread +  "</span> </a>");
+	    }
         }
     }
 
@@ -506,6 +511,8 @@
     function openConversation(id) {
         var contact = tbContacts[id];
         currentTo = contact.Name;
+        delete tbContacts[id].unread;
+
         gotoView("conversationView");
     }
 
@@ -604,6 +611,12 @@
 	    tbContacts[idxcon].Messages[idxmsg].createdat = result.rows[0].send_at;
 	    tbContacts[idxcon].Messages[idxmsg].type = result.rows[0].type;
 	    tbContacts[idxcon].Messages[idxmsg].state = "read";
+
+	    if (tbContacts[idxcon].unread == undefined) {
+		    tbContacts[idxcon].unread = 1;
+	    } else {
+		    tbContacts[idxcon].unread ++;
+	    }
 
             localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
         }).catch(function(exception) {
