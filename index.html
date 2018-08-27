@@ -523,7 +523,19 @@
             });
    }
 
-    function processMessage() {
+   function processMessageRead(idxcon, idxmsg){
+ /*     eos.contract(contract_account).then(contract =>
+         contract.receivemsg({
+           to: accountname,
+           id: result.rows[idmsg].id,
+         }, {
+           authorization: accountname
+         })).then(function() {
+           console.log("ok");
+	 });*/
+   }
+
+   function processMessage() {
 	console.log("processMessage");
 	loadGlobals();
 
@@ -537,7 +549,7 @@
 			  processMessageToSend(i, m);
 			  break;
 		  case "read":
-			  console.log("STATUS: read - " + msg.content);
+			  processMessageRead(i,m);
 			  break;
 		  default:
 			  console.log(msg.createdat);
@@ -548,33 +560,43 @@
 	///setTimeout(processMessage, 1000);
     }
 
+    function hasContact(name) {
+       for(var i in tbContacts) {
+	       if (tbContacts[i].Name == name) {
+		       return true;
+	       }
+       }
+       return false;
+    }
+
     function getMessagesToMe() {
         eos.getTableRows({
             "json": true,
             "scope": "eosmsg",
             "code": "eosmsg",
             "table": "notification",
-            "limit": 50,
+            "limit": 20,
             "key_type": "name",
             "index_position": 2,
             "lower_bound": accountname,
         }).then(result => {
             console.log(result);
-	    $.each(result.rows, function(index,value) {
-		    if (result.rows[index].to == accountname) {
-			    console.log("Receiving " + result.rows[index].id);
-			    eos.contract(contract_account).then(contract =>
-					    contract.receivemsg({
-						    to: accountname,
-						    id: result.rows[idmsg].id,
-					    }, {
-						    authorization: accountname
-					    })).then(function() {
-				    console.log("ok");
-			    });
-		    }
-	    });
+	    for (var index in result.rows) {
+	       if (result.rows[index].to == accountname) {
+	          console.log("Receiving " + result.rows[index].id);
+		  var from = result.rows[index].from;
+		  
+		  if (!hasContact(from)) {
+                     var contact = {
+                        Name:     from,
+		        Messages: [],
+                     };
+                     tbContacts.push(contact);
+		  }
 
+	       }
+	    };
+            localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
         }).catch(function(exception) {
             if (exception) {
                 alert(exception);
