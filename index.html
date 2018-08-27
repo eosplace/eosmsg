@@ -434,10 +434,10 @@
 
         eos.getAccount(name)
             .then(res => {
-                var contact = JSON.stringify({
+                var contact = {
                     Name:     name,
 		    Messages: [],
-                });
+                };
                 tbContacts.push(contact);
                 localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
 
