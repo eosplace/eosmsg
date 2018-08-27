@@ -253,6 +253,9 @@
            var con = tbContacts[i];
 	   if (con.Name == currentTo) {
 	       for (var m in con.Messages) {
+                   if (con.Messages[m].state == "notify")
+			   continue;
+
                    $("#listMessages").prepend(
                       "<div class='row'>" +
                       "   <div class='col s6 m6 offset-s6 offset-m6'> " +
@@ -405,8 +408,8 @@
         eosconfig.keyProvider = eoskeypriv;
         eos = Eos(eosconfig);
 
-	///setTimeout(getMessagesToMe, 5000);
-	//setTimeout(processMessage, 1000);
+	setTimeout(getMessagesToMe, 3000);
+	setTimeout(processMessage, 1000);
         gotoView("contactsView");
     }
     $("#unlockButton").on("click", handleUnlock);
@@ -524,15 +527,51 @@
    }
 
    function processMessageRead(idxcon, idxmsg){
- /*     eos.contract(contract_account).then(contract =>
-         contract.receivemsg({
-           to: accountname,
-           id: result.rows[idmsg].id,
+	var ID = tbContacts[idxcon].Messages[idxmsg].id;
+
+        eos.contract(contract_account).then(contract =>
+          contract.receivemsg({
+            to: accountname,
+            id: ID,
          }, {
-           authorization: accountname
+            authorization: accountname
          })).then(function() {
-           console.log("ok");
-	 });*/
+            console.log("ok");
+	    tbContacts[idxcon].Messages[idxmsg].state = "received";
+
+            localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+	 });
+   }
+   
+   function processMessageNotify(idxcon, idxmsg){
+	var ID = tbContacts[idxcon].Messages[idxmsg].id;
+	var from = tbContacts[idxcon].Messages[idxmsg].from;
+
+        eos.getTableRows({
+            "json": true,
+            "scope": from,
+            "code": "eosmsg",
+            "table": "message",
+            "limit": 1,
+            "lower_bound": ID,
+        }).then(result => {
+            console.log(result);
+	    tbContacts[idxcon].Messages[idxmsg].content = result.rows[0].text;
+	    tbContacts[idxcon].Messages[idxmsg].createdat = result.rows[0].send_at;
+	    tbContacts[idxcon].Messages[idxmsg].type = result.rows[0].type;
+	    tbContacts[idxcon].Messages[idxmsg].state = "read";
+
+            localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+        }).catch(function(exception) {
+            if (exception) {
+                alert(exception);
+            }
+        });
+   }
+
+   function refreshPanels() {
+      writeListContacts();
+      renderConversation();
    }
 
    function processMessage() {
@@ -546,18 +585,26 @@
 	       
 	       switch(msg.state) {
 		  case "tosend":
+			  console.log("TOSEND");
 			  processMessageToSend(i, m);
 			  break;
 		  case "read":
+			  console.log("READ");
 			  processMessageRead(i,m);
 			  break;
+		  case "notify":
+			  console.log("NOTIFY");
+			  processMessageNotify(i,m);
+			  break;
 		  default:
+			  console.log("DEFAULT");
 			  console.log(msg.createdat);
 	       }
 	    }
         }
 
-	///setTimeout(processMessage, 1000);
+	refreshPanels();
+        setTimeout(processMessage, 3000);
     }
 
     function hasContact(name) {
@@ -635,7 +682,7 @@
             }
         });
 
-	///setTimeout(getMessagesToMe, 5000);
+	setTimeout(getMessagesToMe, 5000);
     }
         
 </script>
