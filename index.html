@@ -568,6 +568,25 @@
        }
        return false;
     }
+    
+    function ContactName2IDX(name) {
+       for(var i in tbContacts) {
+	       if (tbContacts[i].Name == name) {
+		       return i;
+	       }
+       }
+       return -1;
+    }
+
+    function hasMessage(name, idmsg) {
+       var idx = ContactName2IDX(name);
+       for (var i in tbContacts[idx].Messages){
+	       if (tbContacts[idx].Messages[i].id == idmsg) {
+		       return true;
+	       }
+       }
+       return false;
+    }
 
     function getMessagesToMe() {
         eos.getTableRows({
@@ -585,6 +604,7 @@
 	       if (result.rows[index].to == accountname) {
 	          console.log("Receiving " + result.rows[index].id);
 		  var from = result.rows[index].from;
+		  var idmsg = result.rows[index].id;
 		  
 		  if (!hasContact(from)) {
                      var contact = {
@@ -592,6 +612,18 @@
 		        Messages: [],
                      };
                      tbContacts.push(contact);
+		  }
+
+		  if (!hasMessage(from, idmsg)){
+		     console.log("read " + from + " " + idmsg);
+
+		     var idx = ContactName2IDX(from);
+
+		     tbContacts[idx].Messages.push({ 
+			     id: idmsg,
+			     from: from,
+			     state: "notify",
+		     });
 		  }
 
 	       }
