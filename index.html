@@ -512,6 +512,7 @@
         var contact = tbContacts[id];
         currentTo = contact.Name;
         delete tbContacts[id].unread;
+        localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
 
         gotoView("conversationView");
     }
