@@ -170,13 +170,6 @@
             </div>
 
             <div id="listMessages">
-                <div class="row">
-                    <div class="col s6 m6">
-                        <div class="card-panel teal">
-                            <span class="white-text">Hi!!</span>
-                        </div>
-                    </div>
-                </div>
             </div>
 
         </div>
@@ -255,7 +248,18 @@
 	       for (var m in con.Messages) {
                    if (con.Messages[m].state == "notify")
 			   continue;
+                   
+		   if (con.Messages[m].state == "read" || con.Messages[m].state == "received") {
+                      $("#listMessages").prepend(
+                      "<div class='row'>" +
+                      "   <div class='col s6 m6'> " +
+                      "          <div class='card-panel teal'> " +
+                      "               <span class='white-text'>" + con.Messages[m].content + "</span> " +
+                      "          </div>"+
+                      "  </div>"+
+                      "</div>");
 
+		   } else {
                    $("#listMessages").prepend(
                       "<div class='row'>" +
                       "   <div class='col s6 m6 offset-s6 offset-m6'> " +
@@ -264,7 +268,8 @@
                       "                </div>" +
                       "   </div>" +
                       "</div>");
-	       }
+		   }
+	       } 
 	       break;
 	   }
         }
@@ -420,7 +425,7 @@
         for (var i in tbContacts) {
             var con = tbContacts[i];
 
-            $("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "<span class='new badge red'>4</span><span class='new badge blue'>4</span></a>");
+            $("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "<!--span class='new badge red'>4</span><span class='new badge blue'>4</span--> </a>");
         }
     }
 
@@ -538,6 +543,7 @@
          })).then(function() {
             console.log("ok");
 	    tbContacts[idxcon].Messages[idxmsg].state = "received";
+	    delete tbContacts[idxcon].Messages[idxmsg].id;
 
             localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
 	 });
