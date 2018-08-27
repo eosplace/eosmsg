@@ -137,6 +137,10 @@
                 </a>
             </div>
 
+            <div id="msgNoContacts"  class="card-panel grey">
+               Your contact list is empty. Use the plus button to add your contacts.		    
+	    </div>
+
             <!-- Modal Structure -->
             <div id="addContactModal" class="modal">
                 <div class="modal-content">
@@ -459,6 +463,10 @@
 
     function writeListContacts() {
         $("#listContacts").html("");
+	$("#msgNoContacts").hide();
+	if (tbContacts.length == 0) {
+	   $("#msgNoContacts").show();
+	}
 
         for (var i in tbContacts) {
             var con = tbContacts[i];
