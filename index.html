@@ -260,7 +260,7 @@
                       "<div class='row'>" +
                       "   <div class='col s6 m6 offset-s6 offset-m6'> " +
                       "                <div class='card-panel purple'>" +
-                      "                    <span class='black-text'>" + con.Messages[m].content + "</span>" +
+		      "                    <span class='black-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>access_time</i>" +
                       "                </div>" +
                       "   </div>" +
                       "</div>");
@@ -270,7 +270,7 @@
                       "<div class='row'>" +
                       "   <div class='col s6 m6 offset-s6 offset-m6'> " +
                       "                <div class='card-panel indigo'>" +
-                      "                    <span class='black-text'>" + con.Messages[m].content + "</span>" +
+		      "                    <span class='black-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>done</i>" +
                       "                </div>" +
                       "   </div>" +
                       "</div>");
@@ -280,7 +280,7 @@
                       "<div class='row'>" +
                       "   <div class='col s6 m6 offset-s6 offset-m6'> " +
                       "                <div class='card-panel red'>" +
-                      "                    <span class='black-text'>" + con.Messages[m].content + "</span>" +
+		      "                    <span class='black-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>clear</i>" +
                       "                </div>" +
                       "   </div>" +
                       "</div>");
@@ -290,7 +290,7 @@
                       "<div class='row'>" +
                       "   <div class='col s6 m6'> " +
                       "          <div class='card-panel lime'> " +
-                      "               <span class='white-text'>" + con.Messages[m].content + "</span> " +
+		      "               <span class='white-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>chrome_reader_mode</i>" +
                       "          </div>"+
                       "  </div>"+
                       "</div>");
@@ -302,7 +302,7 @@
                       "<div class='row'>" +
                       "   <div class='col s6 m6'> " +
                       "          <div class='card-panel green'> " +
-                      "               <span class='white-text'>" + con.Messages[m].content + "</span> " +
+		      "               <span class='white-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>done_all</i>" +
                       "          </div>"+
                       "  </div>"+
                       "</div>");
@@ -473,7 +473,7 @@
 	    var unread = tbContacts[i].unread;
 
 	    if (unread == undefined) { 
-               $("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "<!--span class='new badge red'>4</span><span class='new badge blue'>4</span--> </a>");
+               $("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "</a>");
 	    } else {
                $("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "<span class='new badge red'>" + unread +  "</span> </a>");
 	    }
@@ -548,7 +548,7 @@
                     "<div class='row'>" +
                     "   <div class='col s6 m6 offset-s6 offset-m6'> " +
                     "                <div class='card-panel purple'>" +
-                    "                    <span class='black-text'>" + text + "</span>" +
+		    "                    <span class='black-text'>" + text + "</span> <i class='material-icons'>access_time</i>" +
                     "                </div>" +
                     "   </div>" +
                     "</div>");
