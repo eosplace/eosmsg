@@ -640,7 +640,7 @@
         eos.getTableRows({
             "json": true,
             "scope": from,
-            "code": "eosmsg",
+            "code": contract_account,
             "table": "message",
             "limit": 1,
             "lower_bound": ID,
@@ -734,8 +734,8 @@
     function getMessagesToMe() {
         eos.getTableRows({
             "json": true,
-            "scope": "eosmsg",
-            "code": "eosmsg",
+            "scope": contract_account,
+            "code": contract_account,
             "table": "notification",
             "limit": 20,
             "key_type": "name",
