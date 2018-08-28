@@ -125,8 +125,10 @@
 
         <!-- Contacts -->
         <div class="view" id="contactsView" style="display:none;">
-            <h3 id="contactsTitle">Contacts</h3>
 
+	    <div id="myinfo" class="row" style="display:none;"></div>
+
+	    <h4>My Contacts</h4>
             <div class="collection" id="listContacts">
                 <!-- <a href="#!" class="collection-item">Alvin</a> -->
             </div>
@@ -165,7 +167,9 @@
  	    <a class="waves-effect waves-light btn-small" id="btnConversationBack">Back</a>
             <h5 id="conversationTitle">Conversation</h5>
 
-            <div class="row">
+	    <div id="toinfo" class="row" style="display:none;"></div>
+            
+	    <div class="row">
                 <div class="input-field col s10 m10">
                     <input id="inputSend" type="text" class="validate">
                 </div>
@@ -239,9 +243,33 @@
     function renderNoop() {}
    
     function renderContacts() {
-	$("#contactsTitle").html("Contacts - " + accountname);
+        renderAccountInfoCardOn(accountname, "myinfo");
         writeListContacts();
     }
+
+   function renderAccountInfoCardOn(acc, div) {
+	$("#" + div).hide();
+        eos.getAccount(acc).then(res => { 
+	    console.log(res);
+	    $("#" + div).html(			    
+               "<div class='col s12 m12'>" +
+               "    <div class='card blue-grey darken-1'>" +
+               "        <div class='card-content white-text'> " +
+               "            <span class='card-title'>" + acc + " - (" + res.created + ")</span>" +
+	       "                <p> <b>RAM Quota: </b>" + res.ram_quota + " - <b>RAM usage: </b> " + res.ram_usage + " </p>" +
+	       "                <p> <b>CPU used: </b>" + res.cpu_limit.used + " - <b>CPU available: </b> " + res.cpu_limit.available + " - <b>CPU max: </b> " + res.cpu_limit.max + " </p>" +
+	       "                <p> <b>Net used: </b>" + res.net_limit.used + " - <b>Net available: </b> " + res.net_limit.available + " - <b>Net max: </b> " + res.net_limit.max + " </p>" +
+               "        </div> " +
+               "       <div class='card-action'>" +
+               "          <a href='https://eosflare.io/account/" + acc + "' target='_blank'>eosflare</a>" +
+               "          <a href='https://eosweb.net/account/" + acc + "' target='_blank'>EOSweb</a>" +
+               "          <a href='https://eosblock.co/account/" + acc + "' target='_blank'>EOS Bloks</a>" +
+               "       </div>" +
+               "    </div>" +
+	       "</div>");
+	    $("#"+div).show();
+        });
+   }
 
     function renderConversation() {
         $("#conversationTitle").html("Conversation with " + currentTo);
