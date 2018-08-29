@@ -165,9 +165,10 @@
         <div class="view" id="conversationView" style="display:none;">
 	    <br/>
  	    <a class="waves-effect waves-light btn-small" id="btnConversationBack">Back</a>
-            <h5 id="conversationTitle">Conversation</h5>
-
+	    
 	    <div id="toinfo" class="row" style="display:none;"></div>
+            
+	    <h5 id="conversationTitle">Conversation</h5>
             
 	    <div class="row">
                 <div class="input-field col s10 m10">
@@ -213,573 +214,573 @@
 </script>
 
 <script>
-    //// Navigation //////////
-    var tbContacts = [];
-    var accountname = "";
+//// EOS ////////////
+var {
+	format,
+	api,
+	ecc,
+	json,
+	Fcbuffer
+} = Eos.modules;
 
-    function loadGlobals() {
-        var strTbContacts = localStorage.getItem("tbContacts");
-        tbContacts = JSON.parse(strTbContacts);
-        if (tbContacts == null)
-            tbContacts = [];
-	
-        accountname = localStorage.getItem("accountname");
-    }
+chain = {
+	mainnet: 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906',
+	testnet: '038f4b0fc8ff18a4f0842a8f0564611f6e96e8535901dd45e43ac8691a1c4dca',
+	sysnet: 'cf057bbfb72640471fd910bcb67639c22df9f92470936cddc1ade0e2f2e7dc4f'
+};
 
-    //// Navigation //////////
-    function initApp() {
-        if (typeof(Storage) !== "undefined") {
-            var eoskeyenc = localStorage.getItem("keyprivenc");
-            if (eoskeyenc == null) {
-                gotoView("setupView");
-            } else {
-                gotoView("unlockView");
-            }
-        } else {
-            gotoView("noStorageView");
-        }
-    }
+/**
+  Other httpEndpoint's: https://www.eosdocs.io/resources/apiendpoints
+ */
+eosconfig = {
+	httpEndpoint: 'http://192.168.0.105:8800',
+	chainId: chain.sysnet,
+	///httpEndpoint: 'https://api.eoslaomao.com',
+	///chainId: chain.mainnet,
+	broadcast: true,
+	keyProvider: "",
+	verbose: false,
+};
 
-    function renderNoop() {}
-   
-    function renderContacts() {
-        renderAccountInfoCardOn(accountname, "myinfo");
-        writeListContacts();
-    }
+var contract_account = "eosdirectmsg";
+eos = Eos(eosconfig);
 
-   function renderAccountInfoCardOn(acc, div) {
+
+//// Navigation //////////
+var tbContacts = [];
+var accountname = "";
+
+function loadGlobals() {
+	var strTbContacts = localStorage.getItem("tbContacts");
+	tbContacts = JSON.parse(strTbContacts);
+	if (tbContacts == null)
+		tbContacts = [];
+
+	accountname = localStorage.getItem("accountname");
+}
+
+//// Navigation //////////
+function initApp() {
+	if (typeof(Storage) !== "undefined") {
+		var eoskeyenc = localStorage.getItem("keyprivenc");
+		if (eoskeyenc == null) {
+			gotoView("setupView");
+		} else {
+			gotoView("unlockView");
+		}
+	} else {
+		gotoView("noStorageView");
+	}
+}
+
+function renderNoop() {}
+
+function renderContacts() {
+	renderAccountInfoCardOn(accountname, "myinfo");
+	writeListContacts();
+}
+
+function renderAccountInfoCardOn(acc, div) {
 	$("#" + div).hide();
-        eos.getAccount(acc).then(res => { 
-	    console.log(res);
-	    $("#" + div).html(			    
-               "<div class='col s12 m12'>" +
-               "    <div class='card blue-grey darken-1'>" +
-               "        <div class='card-content white-text'> " +
-               "            <span class='card-title'>" + acc + " - (" + res.created + ")</span>" +
-	       "                <p> <b>RAM Quota: </b>" + res.ram_quota + " - <b>RAM usage: </b> " + res.ram_usage + " </p>" +
-	       "                <p> <b>CPU used: </b>" + res.cpu_limit.used + " - <b>CPU available: </b> " + res.cpu_limit.available + " - <b>CPU max: </b> " + res.cpu_limit.max + " </p>" +
-	       "                <p> <b>Net used: </b>" + res.net_limit.used + " - <b>Net available: </b> " + res.net_limit.available + " - <b>Net max: </b> " + res.net_limit.max + " </p>" +
-               "        </div> " +
-               "       <div class='card-action'>" +
-               "          <a href='https://eosflare.io/account/" + acc + "' target='_blank'>eosflare</a>" +
-               "          <a href='https://eosweb.net/account/" + acc + "' target='_blank'>EOSweb</a>" +
-               "          <a href='https://eosblock.co/account/" + acc + "' target='_blank'>EOS Bloks</a>" +
-               "       </div>" +
-               "    </div>" +
-	       "</div>");
-	    $("#"+div).show();
-        });
-   }
+	eos.getAccount(acc).then(res => { 
+		console.log(res);
+		$("#" + div).html(			    
+				"<div class='col s12 m12'>" +
+				"    <div class='card blue-grey darken-1'>" +
+				"        <div class='card-content white-text'> " +
+				"            <span class='card-title'>" + acc + " - (" + res.created + ")</span>" +
+				"                <p> <b>RAM Quota: </b>" + res.ram_quota + " - <b>RAM usage: </b> " + res.ram_usage + " </p>" +
+				"                <p> <b>CPU used: </b>" + res.cpu_limit.used + " - <b>CPU available: </b> " + res.cpu_limit.available + " - <b>CPU max: </b> " + res.cpu_limit.max + " </p>" +
+				"                <p> <b>Net used: </b>" + res.net_limit.used + " - <b>Net available: </b> " + res.net_limit.available + " - <b>Net max: </b> " + res.net_limit.max + " </p>" +
+				"        </div> " +
+				"       <div class='card-action'>" +
+				"          <a href='https://eosflare.io/account/" + acc + "' target='_blank'>eosflare</a>" +
+				"          <a href='https://eosweb.net/account/" + acc + "' target='_blank'>EOSweb</a>" +
+				"          <a href='https://eosblock.co/account/" + acc + "' target='_blank'>EOS Bloks</a>" +
+				"       </div>" +
+				"    </div>" +
+				"</div>");
+		$("#"+div).show();
+	});
+}
 
-    function renderConversation() {
-        $("#conversationTitle").html("Conversation with " + currentTo);
-        $("#listMessages").html("");
+function renderConversation() {
+	$("#conversationTitle").html("Conversation with " + currentTo);
+	$("#listMessages").html("");
 
-        for (var i in tbContacts) {
-           var con = tbContacts[i];
-	   if (con.Name == currentTo) {
-	       for (var m in con.Messages) {
-                   ///if (con.Messages[m].state == "notify")
-		   ///	   continue;
-                   
-	       switch(con.Messages[m].state) {
-		  case "tosend":
-                      $("#listMessages").prepend(
-                      "<div class='row'>" +
-                      "   <div class='col s6 m6 offset-s6 offset-m6'> " +
-                      "                <div class='card-panel purple'>" +
-		      "                    <span class='black-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>access_time</i>" +
-                      "                </div>" +
-                      "   </div>" +
-                      "</div>");
-			  break;
-		  case "sent":
-                      $("#listMessages").prepend(
-                      "<div class='row'>" +
-                      "   <div class='col s6 m6 offset-s6 offset-m6'> " +
-                      "                <div class='card-panel indigo'>" +
-		      "                    <span class='black-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>done</i>" +
-                      "                </div>" +
-                      "   </div>" +
-                      "</div>");
-			  break;
-		  case "erased":
-                      $("#listMessages").prepend(
-                      "<div class='row'>" +
-                      "   <div class='col s6 m6 offset-s6 offset-m6'> " +
-                      "                <div class='card-panel red'>" +
-		      "                    <span class='black-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>clear</i>" +
-                      "                </div>" +
-                      "   </div>" +
-                      "</div>");
-			  break;
-		  case "read":
-                      $("#listMessages").prepend(
-                      "<div class='row'>" +
-                      "   <div class='col s6 m6'> " +
-                      "          <div class='card-panel lime'> " +
-		      "               <span class='white-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>chrome_reader_mode</i>" +
-                      "          </div>"+
-                      "  </div>"+
-                      "</div>");
-			  break;
-		  case "notify":
-			  break;
-		  case "received":
-                      $("#listMessages").prepend(
-                      "<div class='row'>" +
-                      "   <div class='col s6 m6'> " +
-                      "          <div class='card-panel green'> " +
-		      "               <span class='white-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>done_all</i>" +
-                      "          </div>"+
-                      "  </div>"+
-                      "</div>");
-			  break;
-		  default:
-			  console.log("DEFAULT render");
-	       }
+	for (var i in tbContacts) {
+		var con = tbContacts[i];
+		if (con.Name == currentTo) {
+			for (var m in con.Messages) {
 
-	       } 
-	       break;
-	   }
-        }
-    }
+				switch(con.Messages[m].state) {
+					case "tosend":
+						$("#listMessages").prepend(
+								"<div class='row'>" +
+								"   <div class='col s6 m6 offset-s6 offset-m6'> " +
+								"                <div class='card-panel purple'>" +
+								"                    <span class='black-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>access_time</i>" +
+								"                </div>" +
+								"   </div>" +
+								"</div>");
+						break;
+					case "sent":
+						$("#listMessages").prepend(
+								"<div class='row'>" +
+								"   <div class='col s6 m6 offset-s6 offset-m6'> " +
+								"                <div class='card-panel indigo'>" +
+								"                    <span class='black-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>done</i>" +
+								"                </div>" +
+								"   </div>" +
+								"</div>");
+						break;
+					case "erased":
+						$("#listMessages").prepend(
+								"<div class='row'>" +
+								"   <div class='col s6 m6 offset-s6 offset-m6'> " +
+								"                <div class='card-panel red'>" +
+								"                    <span class='black-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>clear</i>" +
+								"                </div>" +
+								"   </div>" +
+								"</div>");
+						break;
+					case "read":
+						$("#listMessages").prepend(
+								"<div class='row'>" +
+								"   <div class='col s6 m6'> " +
+								"          <div class='card-panel lime'> " +
+								"               <span class='white-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>chrome_reader_mode</i>" +
+								"          </div>"+
+								"  </div>"+
+								"</div>");
+						break;
+					case "notify":
+						break;
+					case "received":
+						$("#listMessages").prepend(
+								"<div class='row'>" +
+								"   <div class='col s6 m6'> " +
+								"          <div class='card-panel green'> " +
+								"               <span class='white-text'>" + con.Messages[m].content + "</span> <i class='material-icons'>done_all</i>" +
+								"          </div>"+
+								"  </div>"+
+								"</div>");
+						break;
+					default:
+						console.log("DEFAULT render");
+				}
 
-    var panels = {
-        "setupView" : renderNoop,
-        "noStorageView": renderNoop,
+			} 
+			break;
+		}
+	}
+}
+
+var panels = {
+	"setupView" : renderNoop,
+	"noStorageView": renderNoop,
 	"conversationView": renderConversation,
 	"contactsView": renderContacts,
-    };
+};
     
-    function gotoView(view) {
+function gotoView(view) {
 	var rfn = panels[view];
 	if (rfn != undefined) {
-	   rfn();
+		rfn();
 	}
 
-        $(".view").hide();
-        $("#" + view).show();
-    }
+	$(".view").hide();
+	$("#" + view).show();
+}
 
-    //// EOS ////////////
-    var {
-        format,
-        api,
-        ecc,
-        json,
-        Fcbuffer
-    } = Eos.modules;
 
-    chain = {
-        mainnet: 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906',
-        testnet: '038f4b0fc8ff18a4f0842a8f0564611f6e96e8535901dd45e43ac8691a1c4dca',
-        sysnet: 'cf057bbfb72640471fd910bcb67639c22df9f92470936cddc1ade0e2f2e7dc4f'
-    };
+//////////////// EVENTS  ///////////////
+function goodPassword(pw) {
+	if (pw.length < 8) return false;
+	return true;
+}
 
-    /**
-      Other httpEndpoint's: https://www.eosdocs.io/resources/apiendpoints
-    */
-    eosconfig = {
-        ///httpEndpoint: 'http://192.168.0.105:8800',
-        ///chainId: chain.sysnet,
-        httpEndpoint: 'https://api.eoslaomao.com',
-        chainId: chain.mainnet,
-        broadcast: true,
-        keyProvider: "",
-        verbose: false,
-    };
- 
-    var contract_account = "eosdirectmsg";
-    eos = Eos(eosconfig);
+$("#keypriv").blur(function() {
+	var eoskeypriv = $("#keypriv").val();
+	if (!ecc.isValidPrivate(eoskeypriv)) {
+		$("#keypriv").val("");
+		$("#keypub").val("");
 
-    //////////////// EVENTS  ///////////////
-    function goodPassword(pw) {
-        if (pw.length < 8) return false;
-        return true;
-    }
+		M.toast({
+			html: 'Invalid Private Key!'
+		});
+		return;
+	}
 
-    $("#keypriv").blur(function() {
-        var eoskeypriv = $("#keypriv").val();
-        if (!ecc.isValidPrivate(eoskeypriv)) {
-            $("#keypriv").val("");
-            $("#keypub").val("");
+	var eoskeypub = ecc.privateToPublic(eoskeypriv);
+	$("#keypub").val(eoskeypub);
+	M.updateTextFields();
+});
 
-            M.toast({
-                html: 'Invalid Private Key!'
-            });
-            return;
-        }
+var bfish = null;
 
-        var eoskeypub = ecc.privateToPublic(eoskeypriv);
-        $("#keypub").val(eoskeypub);
-        M.updateTextFields();
-    });
+$("#setupButton").on("click", function() {
+	var eoskeypriv = $("#keypriv").val();
+	var eoskeypub = $("#keypub").val();
+	var accountname = $("#setupAccountName").val();
+	var pass1 = $("#pass1").val();
+	var pass2 = $("#pass2").val();
 
-    var bfish = null;
+	if (!ecc.isValidPrivate(eoskeypriv)) {
+		$("#keypriv").val("");
+		$("#keypub").val("");
 
-    $("#setupButton").on("click", function() {
-        var eoskeypriv = $("#keypriv").val();
-        var eoskeypub = $("#keypub").val();
-        var accountname = $("#setupAccountName").val();
-        var pass1 = $("#pass1").val();
-        var pass2 = $("#pass2").val();
+		M.toast({
+			html: 'Invalid Private Key!'
+		});
+		return;
+	}
 
-        if (!ecc.isValidPrivate(eoskeypriv)) {
-            $("#keypriv").val("");
-            $("#keypub").val("");
+	if (pass1 != pass2) {
+		$("#pass1").val("");
+		$("#pass2").val("");
 
-            M.toast({
-                html: 'Invalid Private Key!'
-            });
-            return;
-        }
+		M.toast({
+			html: 'Passwords not match!'
+		});
+		return;
+	}
 
-        if (pass1 != pass2) {
-            $("#pass1").val("");
-            $("#pass2").val("");
+	if (!goodPassword(pass1)) {
+		$("#pass1").val("");
+		$("#pass2").val("");
 
-            M.toast({
-                html: 'Passwords not match!'
-            });
-            return;
-        }
+		M.toast({
+			html: 'Weak password!'
+		});
+		return;
+	}
 
-        if (!goodPassword(pass1)) {
-            $("#pass1").val("");
-            $("#pass2").val("");
+	bfish = new Blowfish(pass1);
+	var keyprivenc = bfish.encrypt(eoskeypriv);
 
-            M.toast({
-                html: 'Weak password!'
-            });
-            return;
-        }
+	localStorage.setItem("keyprivenc", keyprivenc);
+	localStorage.setItem("keypub", eoskeypub);
+	localStorage.setItem("accountname", accountname);
 
-        bfish = new Blowfish(pass1);
-        var keyprivenc = bfish.encrypt(eoskeypriv);
+	gotoView("unlockView");
+});
 
-        localStorage.setItem("keyprivenc", keyprivenc);
-        localStorage.setItem("keypub", eoskeypub);
-        localStorage.setItem("accountname", accountname);
+function handleUnlock() {
+	var pass = $("#passUnlock").val();
+	var keyprivenc = localStorage.getItem("keyprivenc");
 
-        gotoView("unlockView");
-    });
+	bfish = new Blowfish(pass);
+	var decrypted = bfish.decrypt(keyprivenc);
+	eoskeypriv = bfish.trimZeros(decrypted); // for string/text information 
 
-    function handleUnlock() {
-        var pass = $("#passUnlock").val();
-        var keyprivenc = localStorage.getItem("keyprivenc");
+	if (!ecc.isValidPrivate(eoskeypriv)) {
+		$("#passUnlock").val("");
 
-        bfish = new Blowfish(pass);
-        var decrypted = bfish.decrypt(keyprivenc);
-        eoskeypriv = bfish.trimZeros(decrypted); // for string/text information 
+		M.toast({
+			html: 'Wrong Password!'
+		});
+		return;
+	}
 
-        if (!ecc.isValidPrivate(eoskeypriv)) {
-            $("#passUnlock").val("");
-
-            M.toast({
-                html: 'Wrong Password!'
-            });
-            return;
-        }
-
-        eosconfig.keyProvider = eoskeypriv;
-        eos = Eos(eosconfig);
+	eosconfig.keyProvider = eoskeypriv;
+	eos = Eos(eosconfig);
 
 	setTimeout(getMessagesToMe, 3000);
 	setTimeout(processMessage, 1000);
-        gotoView("contactsView");
-    }
-    $("#unlockButton").on("click", handleUnlock);
+	gotoView("contactsView");
+}
+$("#unlockButton").on("click", handleUnlock);
 
-    function writeListContacts() {
-        $("#listContacts").html("");
+function writeListContacts() {
+	$("#listContacts").html("");
 	$("#msgNoContacts").hide();
 	if (tbContacts.length == 0) {
-	   $("#msgNoContacts").show();
+		$("#msgNoContacts").show();
 	}
 
-        for (var i in tbContacts) {
-            var con = tbContacts[i];
-	    var unread = tbContacts[i].unread;
+	for (var i in tbContacts) {
+		var con = tbContacts[i];
+		var unread = tbContacts[i].unread;
 
-	    if (unread == undefined) { 
-               $("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "</a>");
-	    } else {
-               $("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "<span class='new badge red'>" + unread +  "</span> </a>");
-	    }
-        }
-    }
+		if (unread == undefined) { 
+			$("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "</a>");
+		} else {
+			$("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "<span class='new badge red'>" + unread +  "</span> </a>");
+		}
+	}
+}
 
-    function addNewContact() {
-        var name = $("#inputNewContact").val();
-        $("#inputNewContact").val("");
+function addNewContact() {
+	var name = $("#inputNewContact").val();
+	$("#inputNewContact").val("");
 
-        if (accountname == name) {
-            M.toast({
-                html: "It's your account name!!",
-            });
-            return;
-        }
+	if (accountname == name) {
+		M.toast({
+			html: "It's your account name!!",
+		});
+		return;
+	}
 
-        eos.getAccount(name)
-            .then(res => {
-                var contact = {
-                    Name:     name,
-		    Messages: [],
-                };
-                tbContacts.push(contact);
-                localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+	eos.getAccount(name)
+		.then(res => {
+			var contact = {
+				Name:     name,
+				Messages: [],
+			};
+			tbContacts.push(contact);
+			localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
 
-                writeListContacts();
+			writeListContacts();
 
-            })
-            .catch(err => {
-                M.toast({
-                    html: 'Account name not found!'
-                });
-            })
-    }
+		})
+	.catch(err => {
+		M.toast({
+			html: 'Account name not found!'
+		});
+	})
+}
 
-    $("#btnConversationBack").click(function() {
-        gotoView("contactsView");
-    });
+$("#btnConversationBack").click(function() {
+	gotoView("contactsView");
+});
 
-    var currentTo = "";
+var currentTo = "";
 
-    function openConversation(id) {
-        var contact = tbContacts[id];
-        currentTo = contact.Name;
-        delete tbContacts[id].unread;
-        localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+function openConversation(id) {
+	var contact = tbContacts[id];
+	currentTo = contact.Name;
+	delete tbContacts[id].unread;
+	localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
 
-        gotoView("conversationView");
-    }
+	gotoView("conversationView");
+}
 
-    $("#sendButton").click(function() {
-        var text = $("#inputSend").val();
+$("#sendButton").click(function() {
+	var text = $("#inputSend").val();
 
-        if (text.length > 0) {
-                for (var i in tbContacts) {
-                   var con = tbContacts[i];
-		   if (con.Name == currentTo) {
-			   con.Messages.push({
-				   content: text,
-				   createdat: Date.now(),
-				   to: currentTo,
-				   state: "tosend",
-			   });
-			   tbContacts[i] = con;
-                           localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
-			   break;
-		   }
-                }
+	if (text.length > 0) {
+		for (var i in tbContacts) {
+			var con = tbContacts[i];
+			if (con.Name == currentTo) {
+				con.Messages.push({
+					content: text,
+					createdat: Date.now(),
+					to: currentTo,
+					state: "tosend",
+				});
+				tbContacts[i] = con;
+				localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+				break;
+			}
+		}
 
-                $("#listMessages").prepend(
-                    "<div class='row'>" +
-                    "   <div class='col s6 m6 offset-s6 offset-m6'> " +
-                    "                <div class='card-panel purple'>" +
-		    "                    <span class='black-text'>" + text + "</span> <i class='material-icons'>access_time</i>" +
-                    "                </div>" +
-                    "   </div>" +
-                    "</div>");
+		$("#listMessages").prepend(
+				"<div class='row'>" +
+				"   <div class='col s6 m6 offset-s6 offset-m6'> " +
+				"                <div class='card-panel purple'>" +
+				"                    <span class='black-text'>" + text + "</span> <i class='material-icons'>access_time</i>" +
+				"                </div>" +
+				"   </div>" +
+				"</div>");
 
-                $("#inputSend").val("");
-        }
-    });    
+		$("#inputSend").val("");
+	}
+});    
 
-    function processMessageToSend(idxcon, idxmsg) {
+function processMessageToSend(idxcon, idxmsg) {
 	console.log("STATUS: tosend - " + idxcon, idxmsg);
-            
+
 	var con = tbContacts[idxcon];
 	var msg = con.Messages[idxmsg];
 
-        eos.contract(contract_account).then(contract =>
-           contract.sendmsg({
-              from: accountname,
-              to: currentTo,
-              msg: msg.content,
-           }, {
-              authorization: accountname
-           })).then(function() {
+	eos.contract(contract_account).then(contract =>
+			contract.sendmsg({
+				from: accountname,
+				to: currentTo,
+				msg: msg.content,
+			}, {
+				authorization: accountname
+			})).then(function() {
 		console.log("OK");
-	        tbContacts[idxcon].Messages[idxmsg].state = "sent";
+		tbContacts[idxcon].Messages[idxmsg].state = "sent";
 
-                localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
-           }).catch(function(exception) {
-	      console.log(exception);
-                /*if (exception) {
-                    M.toast({
-                        html: exception
-                    });
-                }*/
-            });
-   }
+		localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+	}).catch(function(exception) {
+				console.log(exception);
+				/*if (exception) {
+				  M.toast({
+				  html: exception
+				  });
+				  }*/
+			});
+}
 
-   function processMessageRead(idxcon, idxmsg){
+function processMessageRead(idxcon, idxmsg){
 	var ID = tbContacts[idxcon].Messages[idxmsg].id;
 
-        eos.contract(contract_account).then(contract =>
-          contract.receivemsg({
-            to: accountname,
-            id: ID,
-         }, {
-            authorization: accountname
-         })).then(function() {
-            console.log("ok");
-	    tbContacts[idxcon].Messages[idxmsg].state = "received";
-	    delete tbContacts[idxcon].Messages[idxmsg].id;
+	eos.contract(contract_account).then(contract =>
+			contract.receivemsg({
+				to: accountname,
+				id: ID,
+			}, {
+				authorization: accountname
+			})).then(function() {
+		console.log("ok");
+		tbContacts[idxcon].Messages[idxmsg].state = "received";
+		delete tbContacts[idxcon].Messages[idxmsg].id;
 
-            localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
-	 });
-   }
+		localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+	});
+}
    
-   function processMessageNotify(idxcon, idxmsg){
+function processMessageNotify(idxcon, idxmsg){
 	var ID = tbContacts[idxcon].Messages[idxmsg].id;
 	var from = tbContacts[idxcon].Messages[idxmsg].from;
 
-        eos.getTableRows({
-            "json": true,
-            "scope": from,
-            "code": contract_account,
-            "table": "message",
-            "limit": 1,
-            "lower_bound": ID,
-        }).then(result => {
-            console.log(result);
-	    tbContacts[idxcon].Messages[idxmsg].content = result.rows[0].text;
-	    tbContacts[idxcon].Messages[idxmsg].createdat = result.rows[0].send_at;
-	    tbContacts[idxcon].Messages[idxmsg].type = result.rows[0].type;
-	    tbContacts[idxcon].Messages[idxmsg].state = "read";
+	eos.getTableRows({
+		"json": true,
+		"scope": from,
+		"code": contract_account,
+		"table": "message",
+		"limit": 1,
+		"lower_bound": ID,
+	}).then(result => {
+		console.log(result);
+		tbContacts[idxcon].Messages[idxmsg].content = result.rows[0].text;
+		tbContacts[idxcon].Messages[idxmsg].createdat = result.rows[0].send_at;
+		tbContacts[idxcon].Messages[idxmsg].type = result.rows[0].type;
+		tbContacts[idxcon].Messages[idxmsg].state = "read";
 
-	    if (tbContacts[idxcon].unread == undefined) {
-		    tbContacts[idxcon].unread = 1;
-	    } else {
-		    tbContacts[idxcon].unread ++;
-	    }
+		if (tbContacts[idxcon].unread == undefined) {
+			tbContacts[idxcon].unread = 1;
+		} else {
+			tbContacts[idxcon].unread ++;
+		}
 
-            localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
-        }).catch(function(exception) {
-            if (exception) {
-                alert(exception);
-            }
-        });
-   }
+		localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+	}).catch(function(exception) {
+		if (exception) {
+			alert(exception);
+		}
+	});
+}
 
-   function refreshPanels() {
-      writeListContacts();
-      renderConversation();
-   }
+function refreshPanels() {
+	writeListContacts();
+	renderConversation();
+}
 
-   function processMessage() {
+function processMessage() {
 	console.log("processMessage");
 	loadGlobals();
 
-        for (var i in tbContacts) {
-            var con = tbContacts[i];
-	    for (var m in con.Messages) {
-	       var msg = con.Messages[m];
-	       
-	       switch(msg.state) {
-		  case "tosend":
-			  console.log("TOSEND");
-			  processMessageToSend(i, m);
-			  break;
-		  case "read":
-			  console.log("READ");
-			  processMessageRead(i,m);
-			  break;
-		  case "notify":
-			  console.log("NOTIFY");
-			  processMessageNotify(i,m);
-			  break;
-		  default:
-			  console.log("DEFAULT");
-			  console.log(msg.createdat);
-	       }
-	    }
-        }
+	for (var i in tbContacts) {
+		var con = tbContacts[i];
+		for (var m in con.Messages) {
+			var msg = con.Messages[m];
+
+			switch(msg.state) {
+				case "tosend":
+					console.log("TOSEND");
+					processMessageToSend(i, m);
+					break;
+				case "read":
+					console.log("READ");
+					processMessageRead(i,m);
+					break;
+				case "notify":
+					console.log("NOTIFY");
+					processMessageNotify(i,m);
+					break;
+				default:
+					console.log("DEFAULT");
+					console.log(msg.createdat);
+			}
+		}
+	}
 
 	refreshPanels();
-        setTimeout(processMessage, 3000);
-    }
+	setTimeout(processMessage, 3000);
+}
 
-    function hasContact(name) {
-       for(var i in tbContacts) {
-	       if (tbContacts[i].Name == name) {
-		       return true;
-	       }
-       }
-       return false;
-    }
-    
-    function ContactName2IDX(name) {
-       for(var i in tbContacts) {
-	       if (tbContacts[i].Name == name) {
-		       return i;
-	       }
-       }
-       return -1;
-    }
+function hasContact(name) {
+	for(var i in tbContacts) {
+		if (tbContacts[i].Name == name) {
+			return true;
+		}
+	}
+	return false;
+}
 
-    function hasMessage(name, idmsg) {
-       var idx = ContactName2IDX(name);
-       for (var i in tbContacts[idx].Messages){
-	       if (tbContacts[idx].Messages[i].id == idmsg) {
-		       return true;
-	       }
-       }
-       return false;
-    }
+function ContactName2IDX(name) {
+	for(var i in tbContacts) {
+		if (tbContacts[i].Name == name) {
+			return i;
+		}
+	}
+	return -1;
+}
 
-    function getMessagesToMe() {
-        eos.getTableRows({
-            "json": true,
-            "scope": contract_account,
-            "code": contract_account,
-            "table": "notification",
-            "limit": 20,
-            "key_type": "name",
-            "index_position": 2,
-            "lower_bound": accountname,
-        }).then(result => {
-            console.log(result);
-	    for (var index in result.rows) {
-	       if (result.rows[index].to == accountname) {
-	          console.log("Receiving " + result.rows[index].id);
-		  var from = result.rows[index].from;
-		  var idmsg = result.rows[index].id;
-		  
-		  if (!hasContact(from)) {
-                     var contact = {
-                        Name:     from,
-		        Messages: [],
-                     };
-                     tbContacts.push(contact);
-		  }
+function hasMessage(name, idmsg) {
+	var idx = ContactName2IDX(name);
+	for (var i in tbContacts[idx].Messages){
+		if (tbContacts[idx].Messages[i].id == idmsg) {
+			return true;
+		}
+	}
+	return false;
+}
 
-		  if (!hasMessage(from, idmsg)){
-		     console.log("read " + from + " " + idmsg);
+function getMessagesToMe() {
+	eos.getTableRows({
+		"json": true,
+		"scope": contract_account,
+		"code": contract_account,
+		"table": "notification",
+		"limit": 20,
+		"key_type": "name",
+		"index_position": 2,
+		"lower_bound": accountname,
+	}).then(result => {
+		console.log(result);
+		for (var index in result.rows) {
+			if (result.rows[index].to == accountname) {
+				console.log("Receiving " + result.rows[index].id);
+				var from = result.rows[index].from;
+				var idmsg = result.rows[index].id;
 
-		     var idx = ContactName2IDX(from);
+				if (!hasContact(from)) {
+					var contact = {
+						Name:     from,
+						Messages: [],
+					};
+					tbContacts.push(contact);
+				}
 
-		     tbContacts[idx].Messages.push({ 
-			     id: idmsg,
-			     from: from,
-			     state: "notify",
-		     });
-		  }
+				if (!hasMessage(from, idmsg)){
+					console.log("read " + from + " " + idmsg);
 
-	       }
-	    };
-            localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
-        }).catch(function(exception) {
-            if (exception) {
-                alert(exception);
-            }
-        });
+					var idx = ContactName2IDX(from);
+
+					tbContacts[idx].Messages.push({ 
+						id: idmsg,
+						from: from,
+						state: "notify",
+					});
+				}
+
+			}
+		};
+		localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+	}).catch(function(exception) {
+		if (exception) {
+			alert(exception);
+		}
+	});
 
 	setTimeout(getMessagesToMe, 5000);
-    }
+}
         
 </script>
 

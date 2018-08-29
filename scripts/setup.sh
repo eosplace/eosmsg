@@ -41,9 +41,9 @@ cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} set con
 echo "Sending eosio.msig contract"
 cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} set contract eosio.msig ${EOS_CONTRACTS}/eosio.msig -p eosio.msig
 
-echo "Creating eosmsg user and registring contract" 
-cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT}  create account eosio eosmsg EOS7rMZfsA4yucaLyuEzAiBrhKj221qABT5zuKqtsq1Q1a1iVxe8M EOS7rMZfsA4yucaLyuEzAiBrhKj221qABT5zuKqtsq1Q1a1iVxe8M
-cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} set contract eosmsg ../contract/ -p eosmsg
+echo "Creating eosdirectmsg user and registring contract" 
+cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT}  create account eosio eosdirectmsg EOS7rMZfsA4yucaLyuEzAiBrhKj221qABT5zuKqtsq1Q1a1iVxe8M EOS7rMZfsA4yucaLyuEzAiBrhKj221qABT5zuKqtsq1Q1a1iVxe8M
+cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} set contract eosdirectmsg ../contract/ -p eosdirectmsg
 
 
 echo "Creating player1"
