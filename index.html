@@ -304,6 +304,11 @@ function renderAccountInfoCardOn(acc, div) {
 	});
 }
 
+
+function renderConversationAll() {
+	renderAccountInfoCardOn(currentTo, "toinfo");
+}
+
 function renderConversation() {
 	$("#conversationTitle").html("Conversation with " + currentTo);
 	$("#listMessages").html("");
@@ -379,7 +384,7 @@ function renderConversation() {
 var panels = {
 	"setupView" : renderNoop,
 	"noStorageView": renderNoop,
-	"conversationView": renderConversation,
+	"conversationView": renderConversationAll,
 	"contactsView": renderContacts,
 };
     
