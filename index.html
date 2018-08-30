@@ -59,7 +59,7 @@
 	<div id="menuNav" style="display:none;">
 		<nav>
 			<div class="nav-wrapper">
-				<a href="#!" class="brand-logo">Logo</a>
+				<a href="#!" class="brand-logo">EOSMsg</a>
 				<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
 				<ul class="right hide-on-med-and-down">
 					<li><a href="javascript:gotoView('contactsView');">Messages</a></li>
@@ -156,7 +156,7 @@
             </div>
 
             <div class="fixed-action-btn">
-                <a class="btn-floating btn-large waves-effect waves-light red modal-trigger" href="#addContactModal">
+                <a id="addContactModal" class="btn-floating btn-large waves-effect waves-light red modal-trigger" href="#addContactModal">
                     <i class="large material-icons">add</i>
                 </a>
             </div>
@@ -218,12 +218,47 @@
         
 	<!-- DApps view -->
         <div class="view" id="dappsView" style="display:none;">
-	    <h1>DApps</h1>
+
+	    <div id="installDAppProgress" class="progress" style="display:none;">
+	       <div class="indeterminate"></div>
+	    </div>
+
+	    <div class="row">
+		    <div class="col s12 m6">
+			    <div class="card">
+				    <div class="card-image waves-effect waves-block waves-light">
+					    <img class="activator" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSO1euUpUJQ3POFvSoet1buiS7fCxizmo2P8NIovALbpwkts8c-A">
+				    </div>
+				    <div class="card-content">
+					    <span class="card-title activator grey-text text-darken-4">DApps Suggestions<i class="material-icons right">more_vert</i></span>
+				    </div>
+				    <div class="card-reveal">
+					    <span class="card-title grey-text text-darken-4">DApps Suggestions<i class="material-icons right">close</i></span>
+					    <p>Here you can know dapps integrated into EOSMsg, enjoy!!</p>
+				    </div>
+				    <div class="card-action">
+					    <a href="javascript:gotoView('suggestionsView');"">Go to</a>
+				    </div>
+			    </div>
+		    </div>
+	    </div>
+
+
+            <div class="fixed-action-btn">
+                <a class="btn-floating btn-large waves-effect waves-light red modal-trigger" href="#addDapp">
+                    <i class="large material-icons">add</i>
+                </a>
+            </div>
         </div>
 
 	<!-- Settings view -->
         <div class="view" id="settingsView" style="display:none;">
 	    <h1>Settings</h1>
+        </div>
+	
+	<!-- Suggestions dapps -->
+        <div class="view" id="suggestionsView" style="display:none;">
+	    <h1>DApps Suggestions</h1>
         </div>
     </div>
 
@@ -237,15 +272,7 @@
 
 <script>
     $(document).ready(function() {
-        $('.sidenav').sidenav({
-        ///    ///menuWidth: 300, // Default is 300
-        ///    ///edge: 'right', // Choose the horizontal origin
-        ///    closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
-        ///    draggable: true, // Choose whether you can drag to open on touch screens,
-        ///    ///onOpen: function(el) { /* Do Stuff* / }, // A function to be called when sideNav is opened
-        ///    ///onClose: function(el) { /* Do Stuff* / }, // A function to be called when sideNav is closed
-        });
-
+        $('.sidenav').sidenav();
         $('#addContactModal').modal();
         loadGlobals();
         initApp();
@@ -438,6 +465,7 @@ var panels = {
 	"dappsView": renderNoop,
 	"daapView": renderNoop,
 	"settingsView": renderNoop,
+	"suggestionsView": renderNoop,
 };
     
 function gotoView(view) {
