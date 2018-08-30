@@ -56,8 +56,30 @@
 </head>
 
 <body>
-    <div id="content" class="container">
+	<div id="menuNav" style="display:none;">
+		<nav>
+			<div class="nav-wrapper">
+				<a href="#!" class="brand-logo">Logo</a>
+				<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+				<ul class="right hide-on-med-and-down">
+					<li><a href="javascript:gotoView('contactsView');">Messages</a></li>
+					<li><a href="javascript:gotoView('dappsView');">DApps</a></li>
+					<li><a href="javascript:gotoView('settingsView');">Settings</a></li>
+					<li><a href="#">Lock</a></li>
+				</ul>
+			</div>
+		</nav>
 
+		<ul class="sidenav" id="mobile-demo">
+			<li><a href="javascript:gotoView('contactsView');">Messages</a></li>
+			<li><a href="javascript:gotoView('dappsView');">DApps</a></li>
+			<li><a href="javascript:gotoView('settingsView');">Settings</a></li>
+			<li><a href="#">Lock</a></li>
+		</ul>
+	</div>
+
+
+    <div id="content" class="container">
         <!-- Setup -->
         <div class="view" id="setupView" style="display:none;">
             <h1>Setup</h1>
@@ -107,9 +129,6 @@
         <!-- Unlock -->
         <div class="view" id="unlockView" style="display:none;">
             <h1>Unlock</h1>
-
-	    <iframe id="appiframe">
-	    </iframe>
 
             <div class="row">
                 <form class="col s12">
@@ -191,7 +210,24 @@
         <div class="view" id="noStorageView" style="display:none;">
             <h3>Storage is not supported by you browser. Sorry!</h3>
         </div>
+
+        <!-- DApp view -->
+        <div class="view" id="dappView" style="display:none;">
+	    <iframe id="appiframe" style="border: 0px;"></iframe>
+        </div>
+        
+	<!-- DApps view -->
+        <div class="view" id="dappsView" style="display:none;">
+	    <h1>DApps</h1>
+        </div>
+
+	<!-- Settings view -->
+        <div class="view" id="settingsView" style="display:none;">
+	    <h1>Settings</h1>
+        </div>
     </div>
+
+
 </body>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -201,13 +237,13 @@
 
 <script>
     $(document).ready(function() {
-        $('.button-collapse').sidenav({
-            ///menuWidth: 300, // Default is 300
-            ///edge: 'right', // Choose the horizontal origin
-            closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
-            draggable: true, // Choose whether you can drag to open on touch screens,
-            ///onOpen: function(el) { /* Do Stuff* / }, // A function to be called when sideNav is opened
-            ///onClose: function(el) { /* Do Stuff* / }, // A function to be called when sideNav is closed
+        $('.sidenav').sidenav({
+        ///    ///menuWidth: 300, // Default is 300
+        ///    ///edge: 'right', // Choose the horizontal origin
+        ///    closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+        ///    draggable: true, // Choose whether you can drag to open on touch screens,
+        ///    ///onOpen: function(el) { /* Do Stuff* / }, // A function to be called when sideNav is opened
+        ///    ///onClose: function(el) { /* Do Stuff* / }, // A function to be called when sideNav is closed
         });
 
         $('#addContactModal').modal();
@@ -322,6 +358,7 @@ function renderConversationAll() {
 }
 
 function renderConversation() {
+	$("#menuNav").show();
 	$("#conversationTitle").html("Conversation with " + currentTo);
 	$("#listMessages").html("");
 
@@ -398,6 +435,9 @@ var panels = {
 	"noStorageView": renderNoop,
 	"conversationView": renderConversationAll,
 	"contactsView": renderContacts,
+	"dappsView": renderNoop,
+	"daapView": renderNoop,
+	"settingsView": renderNoop,
 };
     
 function gotoView(view) {
