@@ -253,7 +253,7 @@
 
         <!-- DApp view -->
         <div class="view" id="dappView" style="display:none;">
-	    <div id="divappiframe">
+	    <div id="divappiframe" class="row">
 	       <iframe id="appiframe" style="border: 0px;"></iframe>
 	    </div>
         </div>
@@ -375,11 +375,16 @@ function initApp() {
 
 function loadContentInIFrame(content){
         $("#divappiframe").html("");
-	$("#divappiframe").html("<iframe id='appiframe' style='border: 0px;'></iframe>");
-	var doc = document.getElementById('appiframe').contentWindow.document;
+	$("#divappiframe").html("<iframe id='appiframe' style='border: 0px;' class='col s12 m12'></iframe>");
+
+	var iframe = document.getElementById('appiframe');
+
+	var doc = iframe.contentWindow.document;
 	doc.open();
 	doc.write(content);
 	doc.close();
+
+	iframe.style.height = ($(document).height() - 64)  + 'px';
 }
 
 function loadRemoteInIFrame(url){
@@ -543,6 +548,19 @@ function renderSuggestions() {
 }
 
 function renderDApp() {
+	var strApp = localStorage.getItem(currentDApp);
+	var app = JSON.parse(strApp);
+	if (app == null) {
+		M.toast({html: "Error loading " + currentDApp});
+		return;
+	}
+
+	if (app.remote) {
+		loadRemoteInIFrame(app.contenturl);
+	} else {
+		M.toast({html: "Local load still not implemented"});
+		///loadContentInIFrame
+	}
 }
 
 var panels = {
