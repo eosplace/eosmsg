@@ -215,10 +215,6 @@
             <h3>Storage is not supported by you browser. Sorry!</h3>
         </div>
 
-        <!-- DApp view -->
-        <div class="view" id="dappView" style="display:none;">
-	    <iframe id="appiframe" style="border: 0px;"></iframe>
-        </div>
         
 	<!-- DApps view -->
         <div class="view" id="dappsView" style="display:none;">
@@ -253,6 +249,13 @@
 	<!-- Settings view -->
         <div class="view" id="settingsView" style="display:none;">
 	    <h1>Settings</h1>
+        </div>
+
+        <!-- DApp view -->
+        <div class="view" id="dappView" style="display:none;">
+	    <div id="divappiframe">
+	       <iframe id="appiframe" style="border: 0px;"></iframe>
+	    </div>
         </div>
 	
 	<!-- Suggestions dapps -->
@@ -335,11 +338,12 @@ eosconfig = {
 var contract_account = "eosdirectmsg";
 eos = Eos(eosconfig);
 
-
 //// Navigation //////////
 var tbContacts = [];
 var dapps = [];
 var accountname = "";
+var currentDApp = "";
+var currentTo = "";
 
 function loadGlobals() {
 	var strTbContacts = localStorage.getItem("tbContacts");
@@ -369,12 +373,18 @@ function initApp() {
 	}
 }
 
-function loadInIFrame(content){
-        ///test
-        var doc = document.getElementById('appiframe').contentWindow.document;
-        doc.open();
-        doc.write(content);
-        doc.close();
+function loadContentInIFrame(content){
+        $("#divappiframe").html("");
+	$("#divappiframe").html("<iframe id='appiframe' style='border: 0px;'></iframe>");
+	var doc = document.getElementById('appiframe').contentWindow.document;
+	doc.open();
+	doc.write(content);
+	doc.close();
+}
+
+function loadRemoteInIFrame(url){
+	loadContentInIFrame("");
+	$("#appiframe").attr('src',url);   
 }
 
 function renderNoop() {}
@@ -485,6 +495,11 @@ function renderConversation() {
 	}
 }
 
+function gotoDApp(app) {
+	currentDApp = app;
+	gotoView("dappView");
+}
+
 function renderDApps () {
 	$("#listDApps > .installed").remove();
 	for(var i in dapps) {
@@ -511,7 +526,7 @@ function renderDApps () {
 				"           <p>" + app.description + "</p>"+
 				"       </div>"+
 				"       <div class='card-action'>"+
-				"          <a href=\"javascript:gotoView('dappView');\">Run</a>" +
+				"          <a href=\"javascript:gotoDApp('" + kapp + "');\">Run</a>" +
 				//"          <a href=\"javascript:gotoView('dappView');\">Remove</a>" +
 				"       </div>"+
 				"   </div>"+
@@ -527,13 +542,16 @@ function renderSuggestions() {
 	}
 }
 
+function renderDApp() {
+}
+
 var panels = {
 	"setupView" : renderNoop,
 	"noStorageView": renderNoop,
 	"conversationView": renderConversationAll,
 	"contactsView": renderContacts,
 	"dappsView": renderDApps,
-	"dappView": renderNoop,
+	"dappView": renderDApp,
 	"settingsView": renderNoop,
 	"suggestionsView": renderSuggestions,
 };
@@ -702,8 +720,6 @@ $("#btnConversationBack").click(function() {
 $("#btnSuggestionsBack").click(function() {
 	gotoView("dappsView");
 });
-
-var currentTo = "";
 
 function openConversation(id) {
 	var contact = tbContacts[id];
