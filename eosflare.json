@@ -1,0 +1,11 @@
+{
+	"key": "eosflare", 
+	"name" : "EOSFlare",
+        "description" : "",
+        "author" : "eosflare.io",
+        "contenturl" : "https://eosflare.io/",
+        "image" : "https://www.revelacoes.net/wp-content/uploads/2018/02/o-aviso-1.png",
+        "dappversion" : "-",
+        "version" : 1,
+        "remote" : true
+}

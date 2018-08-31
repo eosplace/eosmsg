@@ -79,6 +79,10 @@
 	</div>
 
 
+	<div id="barprogress" class="progress" style="display:none;">
+	    <div class="indeterminate"></div>
+	</div>
+
     <div id="content" class="container">
         <!-- Setup -->
         <div class="view" id="setupView" style="display:none;">
@@ -218,26 +222,21 @@
         
 	<!-- DApps view -->
         <div class="view" id="dappsView" style="display:none;">
-
-	    <div id="installDAppProgress" class="progress" style="display:none;">
-	       <div class="indeterminate"></div>
-	    </div>
-
-	    <div class="row">
-		    <div class="col s12 m6">
+	    <div id="listDApps" class="row">
+		    <div class="col s6 m4">
 			    <div class="card">
 				    <div class="card-image waves-effect waves-block waves-light">
-					    <img class="activator" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSO1euUpUJQ3POFvSoet1buiS7fCxizmo2P8NIovALbpwkts8c-A">
+					    <img class="activator" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQul3s1Bzff2aUmfb-9EqPVQRNN44q9Ur8yrP3wrkNAzKSfB_WS">
 				    </div>
 				    <div class="card-content">
-					    <span class="card-title activator grey-text text-darken-4">DApps Suggestions<i class="material-icons right">more_vert</i></span>
+					    <span class="card-title activator grey-text text-darken-4"  style='font-size: 16px;'>Hot DApps</span>
 				    </div>
 				    <div class="card-reveal">
 					    <span class="card-title grey-text text-darken-4">DApps Suggestions<i class="material-icons right">close</i></span>
 					    <p>Here you can know dapps integrated into EOSMsg, enjoy!!</p>
 				    </div>
 				    <div class="card-action">
-					    <a href="javascript:gotoView('suggestionsView');"">Go to</a>
+					    <a href="javascript:gotoView('suggestionsView');">Go to</a>
 				    </div>
 			    </div>
 		    </div>
@@ -258,7 +257,31 @@
 	
 	<!-- Suggestions dapps -->
         <div class="view" id="suggestionsView" style="display:none;">
-	    <h1>DApps Suggestions</h1>
+	    <br/>
+ 	    <a class="waves-effect waves-light btn-small" id="btnSuggestionsBack">Back</a>
+	    <h4>DApps Suggestions</h4>
+	    
+
+	    <div class="row">
+		    <div class="col s6 m4">
+			    <div class="card">
+				    <div class="card-image waves-effect waves-block waves-light">
+					    <img class="activator" src="https://www.revelacoes.net/wp-content/uploads/2018/02/o-aviso-1.png" >
+				    </div>
+				    <div class="card-content">
+					    <span class="card-title activator grey-text text-darken-4" style='font-size: 16px;'>EOSFlare</span>
+				    </div>
+				    <div class="card-reveal">
+					    <span class="card-title grey-text text-darken-4">EOSFlare<i class="material-icons right">close</i></span>
+					    <p>A EOS network monitor.</p>
+				    </div>
+				    <div class="card-action eosflare installAction" >
+					    <a href="javascript:installDApp('/eosflare.json')">install</a>
+				    </div>
+			    </div>
+		    </div>
+	    </div>
+
         </div>
     </div>
 
@@ -315,6 +338,7 @@ eos = Eos(eosconfig);
 
 //// Navigation //////////
 var tbContacts = [];
+var dapps = [];
 var accountname = "";
 
 function loadGlobals() {
@@ -322,6 +346,11 @@ function loadGlobals() {
 	tbContacts = JSON.parse(strTbContacts);
 	if (tbContacts == null)
 		tbContacts = [];
+
+	var strDApps = localStorage.getItem("DApps");
+	dapps = JSON.parse(strDApps);
+	if (dapps == null)
+		dapps = [];
 
 	accountname = localStorage.getItem("accountname");
 }
@@ -378,7 +407,6 @@ function renderAccountInfoCardOn(acc, div) {
 		$("#"+div).show();
 	});
 }
-
 
 function renderConversationAll() {
 	renderAccountInfoCardOn(currentTo, "toinfo");
@@ -457,15 +485,57 @@ function renderConversation() {
 	}
 }
 
+function renderDApps () {
+	$("#listDApps > .installed").remove();
+	for(var i in dapps) {
+		var kapp = dapps[i];
+
+		var strapp = localStorage.getItem(kapp);
+		app = JSON.parse(strapp);
+		if (dapps == null) {			
+		        M.toast({html: "Error loading " + kapp});
+			continue;
+		}
+
+		$("#listDApps").append(
+				"<div class='col s6 m4 installed'> " +
+				"   <div class='card'>"+
+				"      <div class='card-image waves-effect waves-block waves-light'>" +
+				"            <img class='activator' src='" + app.image + "' >" +
+				"       </div>" +
+				"       <div class='card-content'>" + 
+				"            <span class='card-title activator grey-text text-darken-4'  style='font-size: 16px;'>" + app.name + "</span>" +
+				"       </div>" + 
+				"       <div class='card-reveal'>"+
+				"           <span class='card-title grey-text text-darken-4'>" + app.name + "<i class='material-icons right'>close</i></span>"+
+				"           <p>" + app.description + "</p>"+
+				"       </div>"+
+				"       <div class='card-action'>"+
+				"          <a href=\"javascript:gotoView('dappView');\">Run</a>" +
+				//"          <a href=\"javascript:gotoView('dappView');\">Remove</a>" +
+				"       </div>"+
+				"   </div>"+
+				" </div>");
+
+	}
+}
+
+function renderSuggestions() {
+	$(".installAction").show();
+	for(var i in dapps) {
+		$("."+dapps[i]).hide();
+	}
+}
+
 var panels = {
 	"setupView" : renderNoop,
 	"noStorageView": renderNoop,
 	"conversationView": renderConversationAll,
 	"contactsView": renderContacts,
-	"dappsView": renderNoop,
-	"daapView": renderNoop,
+	"dappsView": renderDApps,
+	"dappView": renderNoop,
 	"settingsView": renderNoop,
-	"suggestionsView": renderNoop,
+	"suggestionsView": renderSuggestions,
 };
     
 function gotoView(view) {
@@ -477,7 +547,6 @@ function gotoView(view) {
 	$(".view").hide();
 	$("#" + view).show();
 }
-
 
 //////////////// EVENTS  ///////////////
 function goodPassword(pw) {
@@ -628,6 +697,10 @@ function addNewContact() {
 
 $("#btnConversationBack").click(function() {
 	gotoView("contactsView");
+});
+
+$("#btnSuggestionsBack").click(function() {
+	gotoView("dappsView");
 });
 
 var currentTo = "";
@@ -866,7 +939,33 @@ function getMessagesToMe() {
 
 	setTimeout(getMessagesToMe, 5000);
 }
-        
+
+
+function installDApp(url) {
+	$("#barprogress").show();
+	$.getJSON(url)
+		.done(function( json ) {
+			console.log( json );
+
+			localStorage.setItem(json.key, JSON.stringify(json));
+
+			dapps.push(json.key);
+		        localStorage.setItem("DApps", JSON.stringify(dapps));
+
+	                $("#barprogress").hide();
+		        $("."+json.key).hide();
+		})
+	.fail(function( jqxhr, textStatus, error ) {
+		var err = textStatus + ", " + error;
+		console.log( "Request Failed: " + err );
+		M.toast({
+			html: 'Request Failed: ' + err
+		});
+
+	        $("#barprogress").hide();
+	});
+}
+
 </script>
 
 
