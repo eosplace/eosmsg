@@ -70,3 +70,11 @@ cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} push ac
 cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} push action eosio.token issue '[ "player2", "1000.0000 EOS", "issue" ]' -p eosio
 cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} push action eosio.token issue '[ "player3", "1000.0000 EOS", "issue" ]' -p eosio
 
+
+echo "Creating ctgbarbeting user and registring contract ctgbarbeting " 
+cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT}  create account eosio ctgbarbeting EOS7rMZfsA4yucaLyuEzAiBrhKj221qABT5zuKqtsq1Q1a1iVxe8M EOS7rMZfsA4yucaLyuEzAiBrhKj221qABT5zuKqtsq1Q1a1iVxe8M
+cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT}  create account eosio feebarbeting EOS7rMZfsA4yucaLyuEzAiBrhKj221qABT5zuKqtsq1Q1a1iVxe8M EOS7rMZfsA4yucaLyuEzAiBrhKj221qABT5zuKqtsq1Q1a1iVxe8M
+cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} set contract ctgbarbeting /home/trumae/eos/goalbarclub/contracts/ctgbarbeting/contract/ -p ctgbarbeting
+
+echo "Allow contract send money"
+cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} set account permission ctgbarbeting active '{"threshold":1, "keys":[{"key":"EOS7rMZfsA4yucaLyuEzAiBrhKj221qABT5zuKqtsq1Q1a1iVxe8M", "weight":1}], "accounts": [{"permission":{"actor":"ctgbarbeting","permission":"eosio.code"},"weight":1}]}' owner -p ctgbarbeting
