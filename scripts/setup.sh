@@ -78,3 +78,9 @@ cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} set con
 
 echo "Allow contract send money"
 cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} set account permission ctgbarbeting active '{"threshold":1, "keys":[{"key":"EOS7rMZfsA4yucaLyuEzAiBrhKj221qABT5zuKqtsq1Q1a1iVxe8M", "weight":1}], "accounts": [{"permission":{"actor":"ctgbarbeting","permission":"eosio.code"},"weight":1}]}' owner -p ctgbarbeting
+
+
+cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} push action ctgbarbeting newgame '["Jogo1","Brazil","Germany",3,"1.0000 EOS", "10.0000 EOS",2019,07,30,0,0,"","Russia"]' -p ctgbarbeting
+cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} push action ctgbarbeting newgame '["Jogo2","Brazil","France",5,"1.0000 EOS", "10.0000 EOS",2019,07,30,0,0,"","Russia"]' -p ctgbarbeting
+cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} push action ctgbarbeting newgame '["Jogo3","Brazil","Mexico",10,"1.0000 EOS", "10.0000 EOS",2019,07,30,0,0,"","Russia"]' -p ctgbarbeting
+
