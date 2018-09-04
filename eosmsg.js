@@ -14,3 +14,11 @@ function transfer(pto, pamount, pmemo) {
 	window.parent.dispatchEvent(tevent);
 }
 
+function getCurrentAccount() {
+	var tevent = new CustomEvent('getCurrentAccount', {detail: {}});
+
+	window.eosaccountname = "";
+	window.parent.dispatchEvent(tevent);
+
+	return window.eosaccountname;
+}

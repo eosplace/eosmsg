@@ -1026,6 +1026,10 @@ window.addEventListener('adjustIFrameHeight', function(e) {
 	$("iframe")[0].style.height = e.detail.height +'px';
 });
 
+window.addEventListener('getCurrentAccount', function(e) {
+	return  $("iframe")[0].contentWindow.eosaccountname = accountname; 
+});
+
 </script>
 
 
