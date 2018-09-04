@@ -123,11 +123,14 @@ function initGameList() {
 					"    </div>"+
 					"</div></div>" ); 
 
-		}}).catch(function(exception) {
-			if (exception) {
-				alert(exception);
-			}
-		});
+		}
+		
+		adjustIFrameHeigth(document.body.scrollHeight);
+	}).catch(function(exception) {
+		if (exception) {
+			alert(exception);
+		}
+	});
 }
 
 function bet(idgame) {

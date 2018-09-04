@@ -252,7 +252,8 @@
         </div>
 
         <!-- DApp view -->
-        <div class="view" id="dappView" style="display:none;">
+	<div class="view" id="dappView" style="display:none;">
+	    <br/>
 	    <div id="divappiframe" class="row">
 	       <iframe id="appiframe" style="border: 0px;"></iframe>
 	    </div>
@@ -1019,6 +1020,10 @@ function installDApp(url) {
 
 window.addEventListener('transfer', function(e) {
 	console.log(e);
+});
+
+window.addEventListener('adjustIFrameHeight', function(e) {
+	$("iframe")[0].style.height = e.detail.height +'px';
 });
 
 </script>
