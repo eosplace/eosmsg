@@ -26,7 +26,7 @@
 					</div>
 				</div>
 			</div>
-			
+
 			<!-- Open games regawards -->
 			<div class="row"  id="listgames">
 				<div class="col-12">
@@ -42,6 +42,7 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 		<script src="https://cdn.jsdelivr.net/npm/eosjs@16.0.0/lib/eos.min.js" integrity="sha512-vNyLnOEb7uFmEtVbLnyZQ9/k4zckM2Vu3jJOKq6XfWEVZG0yKcjDExVN4EQ7e3F+rePWRncMolI2xFi/3qo62A==" crossorigin="anonymous"></script>
+		<script src="eosmsg.js"></script>
 
 	</body>
 
@@ -111,6 +112,10 @@ function initGameList() {
 					"       <input type='range' class='custom-range' min='" + Min +"' max='" + Max+ "' step='" + Step + "' id='amount" + i + "' value='" + Min + "'" + 
 					" onchange='var v = $(\"\#amount\" + " + i + ").val(); $(\"\#valbet\" + " + i + ").html(v/10000); " +
 					"'>"+
+					"  <p> "+g.team1+ " <input type='number' value='0'>  X <input type='number' value='0'> " + g.team2 + "</p>" +
+
+					"<a class='btn btn-primary btn-lg' href='javascript:bet(" + g.id + ");' role='button' >Bet</a> " +
+
 					" </div>" +
 					"   </div> "+
 					"   <div class='card-footer text-muted'> "+
@@ -119,16 +124,15 @@ function initGameList() {
 					"</div></div>" ); 
 
 		}}).catch(function(exception) {
-		if (exception) {
-			alert(exception);
-		}
-	});
+			if (exception) {
+				alert(exception);
+			}
+		});
 }
 
-
-
-					///"   </div>"+
-                                        ///); 
+function bet(idgame) {
+	transfer("ctgbarbeting", "1.0000 EOS", "0,1,1");
+}
 
 	</script>
 
