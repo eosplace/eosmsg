@@ -3,7 +3,7 @@
 	"name" : "SimpleGame",
         "description" : "Bet in soccer games using goalbarclub",
         "author" : "goalbarclub.org",
-        "contenturl" : "/eosmsg/goalbarbeting.html",
+        "contenturl" : "goalbarbeting.html",
         "image" : "http://www.montanascreensavers.com/wp-content/uploads/2018/03/Football-Match-Prediction-300x300.jpg",
         "dappversion" : "0.1",
         "version" : 1,
