@@ -413,6 +413,7 @@ function loadRemoteInIFrame(url){
 function renderNoop() {}
 
 function renderContacts() {
+	$("#menuNav").show();
 	renderAccountInfoCardOn(accountname, "myinfo");
 	writeListContacts();
 }
@@ -593,6 +594,7 @@ var panels = {
 };
     
 function gotoView(view) {
+	stopIFrame();
 	var rfn = panels[view];
 	if (rfn != undefined) {
 		rfn();
@@ -1039,6 +1041,11 @@ window.addEventListener('getEOSHttpEndpoint', function(e) {
 window.addEventListener('getEOSChainID', function(e) {
 	return  $("iframe")[0].contentWindow.eoschainid = eosconfig.chainId; 
 });
+
+function stopIFrame() {
+	loadContentInIFrame("blank");
+}
+
 </script>
 
 <script>
