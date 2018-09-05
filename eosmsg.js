@@ -22,3 +22,22 @@ function getCurrentAccount() {
 
 	return window.eosaccountname;
 }
+
+function getEOSHttpEndpoint() {
+	var tevent = new CustomEvent('getEOSHttpEndpoint', {detail: {}});
+
+	window.eoshttpendpoint = "";
+	window.parent.dispatchEvent(tevent);
+
+	return window.eoshttpendpoint;
+}
+
+function getEOSChainID() {
+	var tevent = new CustomEvent('getEOSChainID', {detail: {}});
+
+	window.eoschainid = "";
+	window.parent.dispatchEvent(tevent);
+
+	return window.eoschainid;
+}
+

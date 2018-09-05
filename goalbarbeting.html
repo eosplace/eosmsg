@@ -18,7 +18,7 @@
 		<div class="container-fluid">
 			<br/>
 			<!-- Claim regawards -->
-			<div class="row"  id="divclaim">
+			<div class="row"  id="divclaim" style="display:none;">
 				<div class="col-10 offset-1">
 					<div class="jumbotron">
 						<h3>Balance to claim: <span id="toclaim">2.0000 EOS</span></h3>
@@ -49,6 +49,7 @@
 	<script>
 $(document).ready(function() {
 	initGameList();
+        updateClaimPanel();
 });
 	</script>
 
@@ -63,20 +64,9 @@ var {
 	Fcbuffer
 } = Eos.modules;
 
-chain = {
-	mainnet: 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906',
-	testnet: '038f4b0fc8ff18a4f0842a8f0564611f6e96e8535901dd45e43ac8691a1c4dca',
-	sysnet: 'cf057bbfb72640471fd910bcb67639c22df9f92470936cddc1ade0e2f2e7dc4f'
-};
-
-/**
-  Other httpEndpoint's: https://www.eosdocs.io/resources/apiendpoints
- */
 eosconfig = {
-	httpEndpoint: 'http://192.168.0.105:8800',
-	chainId: chain.sysnet,
-	///httpEndpoint: 'https://api.eoslaomao.com',
-	///chainId: chain.mainnet,
+	httpEndpoint: getEOSHttpEndpoint(),
+	chainId:  getEOSChainID(),
 	broadcast: true,
 	verbose: false,
 };
@@ -174,10 +164,44 @@ function hideJustBetGame() {
 		if (exception) {
 			alert(exception);
 		}
+	        setTimeout(hideJustBetGame, 5000);
 	});
 	
 }
 
+function updateClaimPanel() {
+	var p = getCurrentAccount();
+	eos.getTableRows({
+		"json": true,
+		"scope": contract_account,
+		"code": contract_account,
+		"table": "player",
+		"limit": 10,
+		"lower_bound": p,
+	}).then(result => {
+		console.log("CLAIM");
+		console.log(result);
+
+		if (result.rows.length == 0) {
+			$("#divclaim").hide();
+		} else {
+			$("#toclaim").html(result.rows[0].eos_balance);
+			$("#divclaim").show();
+		}
+
+	        setTimeout(updateClaimPanel, 5000);
+	}).catch(function(exception) {
+		if (exception) {
+			alert(exception);
+		}
+	        setTimeout(updateClaimPanel, 5000);
+	});
+
+}
+
+function claim() {
+       	
+}
 
 	</script>
 

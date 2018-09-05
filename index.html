@@ -1032,8 +1032,14 @@ window.addEventListener('getCurrentAccount', function(e) {
 	return  $("iframe")[0].contentWindow.eosaccountname = accountname; 
 });
 
-</script>
+window.addEventListener('getEOSHttpEndpoint', function(e) {
+	return  $("iframe")[0].contentWindow.eoshttpendpoint = eosconfig.httpEndpoint; 
+});
 
+window.addEventListener('getEOSChainID', function(e) {
+	return  $("iframe")[0].contentWindow.eoschainid = eosconfig.chainId; 
+});
+</script>
 
 <script>
     /**
