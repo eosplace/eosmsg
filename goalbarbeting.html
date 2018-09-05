@@ -112,7 +112,7 @@ function initGameList() {
 					"       <input type='range' class='custom-range' min='" + Min +"' max='" + Max+ "' step='" + Step + "' id='amount" + i + "' value='" + Min + "'" + 
 					" onchange='var v = $(\"\#amount\" + " + i + ").val(); $(\"\#valbet\" + " + i + ").html(v/10000); " +
 					"'>"+
-					"  <p> "+g.team1+ " <input type='number' value='0'>  X <input type='number' value='0'> " + g.team2 + "</p>" +
+					"  <p> "+g.team1+ " <input type='number' value='0' id='oscore" + g.id + "'>  X <input type='number' value='0' id='tscore" + g.id + "'> " + g.team2 + "</p>" +
 
 					"<a class='btn btn-primary btn-lg' href='javascript:bet(" + g.id + ");' role='button' >Bet</a> " +
 
@@ -134,7 +134,11 @@ function initGameList() {
 }
 
 function bet(idgame) {
-	transfer("ctgbarbeting", "1.0000 EOS", "0,1,1");
+	var amount = format.DecimalUnimply($("#valbet" + idgame).html() * 10000, 4) + " EOS";
+	var sc1 = $("#oscore"+idgame).val();
+	var sc2 = $("#tscore"+idgame).val();
+
+	transfer("ctgbarbeting", amount, "" + idgame + "," + sc1 + "," + sc2);
 }
 
 	</script>

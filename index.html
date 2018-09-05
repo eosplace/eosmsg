@@ -1020,6 +1020,8 @@ function installDApp(url) {
 
 window.addEventListener('transfer', function(e) {
 	console.log(e);
+
+	eos.transfer(accountname, e.detail.to, e.detail.amount, e.detail.memo); 
 });
 
 window.addEventListener('adjustIFrameHeight', function(e) {
