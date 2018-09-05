@@ -257,6 +257,24 @@
 	    <div id="divappiframe" class="row">
 	       <iframe id="appiframe" style="border: 0px;"></iframe>
 	    </div>
+            
+	    <!-- Modal Structure -->
+            <div id="transferModal" class="modal bottom-sheet">
+                <div class="modal-content">
+                    <h4>Transfer</h4>
+		    <p>The DApp is trying make a transfer from your account</p>
+		    <table class="striped">
+			    <tr><td>From</td><td><span id="transferFrom"></span></td></tr>
+			    <tr><td>To</td><td><span id="transferTo"></span></td></tr>
+			    <tr><td>Amount</td><td><span id="transferAmount"></span></td></tr>
+			    <tr><td>Memo</td><td><span id="transferMemo"></span></td></tr>
+		    </table>
+                </div>
+                <div class="modal-footer">
+                    <a id="btnAcceptTransfer" class="modal-close waves-effect waves-green btn-flat">Accept</a>
+                    <a id="btnDenyTransfer" class="modal-close waves-effect waves-green btn-flat">Deny</a>
+                </div>
+            </div>
         </div>
 	
 	<!-- Suggestions dapps -->
@@ -318,6 +336,7 @@
     $(document).ready(function() {
         $('.sidenav').sidenav();
         $('#addContactModal').modal();
+        $('#transferModal').modal();
         loadGlobals();
         initApp();
     });
@@ -1021,9 +1040,22 @@ function installDApp(url) {
 }
 
 window.addEventListener('transfer', function(e) {
-	console.log(e);
+	$("#transferFrom").html(accountname);
+	$("#transferTo").html(e.detail.to);
+	$("#transferAmount").html(e.detail.amount);
+	$("#transferMemo").html(e.detail.memo);
+        $("#transferModal").modal("open");
 
-	eos.transfer(accountname, e.detail.to, e.detail.amount, e.detail.memo); 
+
+	$("#btnDenyTransfer").click(function () {
+		$("#transferModal").modal("close");
+	});
+	
+	$("#btnAcceptTransfer").click(function () {
+		eos.transfer(accountname, e.detail.to, e.detail.amount, e.detail.memo); 
+		$("#transferModal").modal("close");
+	});
+
 });
 
 window.addEventListener('adjustIFrameHeight', function(e) {
