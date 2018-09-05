@@ -21,8 +21,8 @@
 			<div class="row"  id="divclaim">
 				<div class="col-10 offset-1">
 					<div class="jumbotron">
-						<h1>Balance to claim: <span id="toclaim">2.0000 EOS</span></h1>
-						<a class="btn btn-primary btn-lg" href="javascript:alert(getCurrentAccount());" role="button">Claim</a>
+						<h3>Balance to claim: <span id="toclaim">2.0000 EOS</span></h3>
+						<center><a class="btn btn-primary btn-lg" href="#" role="button">Claim</a></center>
 					</div>
 				</div>
 			</div>
@@ -100,7 +100,7 @@ function initGameList() {
 			var Max = g.value_max.substring(0, g.value_max.length - 3) * 10000;
 			var Step = (Max - Min) / 20; 	
 
-			$("#listgames").append("<div class='col-12'><div class='card text-center'>" +
+			$("#listgames").append("<div class='col-12'><div class='card text-center' style='margin-bottom: 10px;'>" +
 					"   <div class='card-header'>" +
 					"      "+g.team1+ " X " + g.team2 +
 					"   </div> "+
@@ -124,8 +124,7 @@ function initGameList() {
 					"</div></div>" ); 
 
 		}
-		
-		adjustIFrameHeigth(document.body.scrollHeight);
+		hideJustBetGame();
 	}).catch(function(exception) {
 		if (exception) {
 			alert(exception);
@@ -139,7 +138,46 @@ function bet(idgame) {
 	var sc2 = $("#tscore"+idgame).val();
 
 	transfer("ctgbarbeting", amount, "" + idgame + "," + sc1 + "," + sc2);
+	hideJustBetGame();
 }
+
+function hideJustBetGame() {
+	var p = getCurrentAccount();
+	eos.getTableRows({
+		"json": true,
+		"scope": contract_account,
+		"code": contract_account,
+		"table": "bet",
+		"limit": 10000,
+
+		//"key_type": "name",
+		//"index_position": 2,
+		//"lower_bound": p,
+	}).then(result => {
+		console.log("BETS");
+		console.log(result);
+
+		for (var i in result.rows) {
+			var bet = result.rows[i];
+			if (p != bet.player)
+				continue;
+			
+			$("#tobet" + bet.idgame).html(
+					"<p><b>Bet at: </b>" + bet.created_at + "</p>" +
+					"<p><b>Amount: " + bet.value + "</p>" + 
+					"<p><h3>" + bet.score1 + "X" + bet.score2 + "</h3></p>");
+		}
+
+		adjustIFrameHeigth(document.body.scrollHeight);
+	        setTimeout(hideJustBetGame, 5000);
+	}).catch(function(exception) {
+		if (exception) {
+			alert(exception);
+		}
+	});
+	
+}
+
 
 	</script>
 
