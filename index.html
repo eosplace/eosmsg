@@ -363,10 +363,10 @@ chain = {
   Other httpEndpoint's: https://www.eosdocs.io/resources/apiendpoints
  */
 eosconfig = {
-	///httpEndpoint: 'http://192.168.0.105:8800',
-	///chainId: chain.sysnet,
-	httpEndpoint: 'https://mainnet.eoscanada.com',
-	chainId: chain.mainnet,
+	httpEndpoint: 'http://192.168.0.105:8800',
+	chainId: chain.sysnet,
+	///httpEndpoint: 'https://mainnet.eoscanada.com',
+	///chainId: chain.mainnet,
 	broadcast: true,
 	keyProvider: "",
 	verbose: false,
@@ -1050,12 +1050,20 @@ window.addEventListener('transfer', function(e) {
 	$("#btnDenyTransfer").click(function () {
 		$("#transferModal").modal("close");
 	});
-	
-	$("#btnAcceptTransfer").click(function () {
-		eos.transfer(accountname, e.detail.to, e.detail.amount, e.detail.memo); 
-		$("#transferModal").modal("close");
+
+	let promisse = new Promise(function(resolve, reject) {	
+		$("#btnAcceptTransfer").click(function () {
+			eos.transfer(accountname, e.detail.to, e.detail.amount, e.detail.memo ).then(result => {
+				resolve(result);
+			}).catch(function(exception) {
+				if (exception) {
+				reject(Error("Transfer Error"));	
+				}
+			});
+		});
 	});
 
+	return  $("iframe")[0].contentWindow.eostransfer = promisse;
 });
 
 window.addEventListener('adjustIFrameHeight', function(e) {

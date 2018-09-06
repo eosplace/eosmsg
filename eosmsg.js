@@ -11,7 +11,10 @@ function adjustIFrameHeigth(h) {
 function transfer(pto, pamount, pmemo) {
 	var tevent = new CustomEvent('transfer', {detail: {to: pto, amount: pamount, memo: pmemo}});
 
-	window.parent.dispatchEvent(tevent);
+	window.eostransfer = "";
+	var promisse = window.parent.dispatchEvent(tevent);
+
+	return window.eostransfer;
 }
 
 function getCurrentAccount() {

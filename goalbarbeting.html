@@ -127,8 +127,14 @@ function bet(idgame) {
 	var sc1 = $("#oscore"+idgame).val();
 	var sc2 = $("#tscore"+idgame).val();
 
-	transfer("ctgbarbeting", amount, "" + idgame + "," + sc1 + "," + sc2);
-	hideJustBetGame();
+	transfer("ctgbarbeting", amount, "" + idgame + "," + sc1 + "," + sc2)
+		.then(result => { 
+			console.log(result); 
+			hideJustBetGame();
+		})
+		.catch(exception => {
+			alert("Transfer error");
+		});
 }
 
 function hideJustBetGame() {
