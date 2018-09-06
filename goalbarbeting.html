@@ -22,7 +22,7 @@
 				<div class="col-10 offset-1">
 					<div class="jumbotron">
 						<h3>Balance to claim: <span id="toclaim">2.0000 EOS</span></h3>
-						<center><a class="btn btn-primary btn-lg" href="#" role="button">Claim</a></center>
+						<center><a class="btn btn-primary btn-lg" href="javascript:claim();" role="button">Claim</a></center>
 					</div>
 				</div>
 			</div>
@@ -84,11 +84,11 @@ function initGameList() {
 	}).then(result => {
 		console.log(result);
 
-		for (var i in result.rows) { 
+		for (var i in result.rows) {
 			var g = result.rows[i];
 			var Min = g.value_min.substring(0, g.value_min.length - 3) * 10000;
 			var Max = g.value_max.substring(0, g.value_max.length - 3) * 10000;
-			var Step = (Max - Min) / 20; 	
+			var Step = (Max - Min) / 20;
 
 			$("#listgames").append("<div class='col-12'><div class='card text-center' style='margin-bottom: 10px;'>" +
 					"   <div class='card-header'>" +
@@ -111,7 +111,7 @@ function initGameList() {
 					"   <div class='card-footer text-muted'> "+
 					"	  Bets until: " + g.bet_until+
 					"    </div>"+
-					"</div></div>" ); 
+					"</div></div>" );
 
 		}
 		hideJustBetGame();
@@ -128,8 +128,8 @@ function bet(idgame) {
 	var sc2 = $("#tscore"+idgame).val();
 
 	transfer("ctgbarbeting", amount, "" + idgame + "," + sc1 + "," + sc2)
-		.then(result => { 
-			console.log(result); 
+		.then(result => {
+			console.log(result);
 			hideJustBetGame();
 		})
 		.catch(exception => {
@@ -157,10 +157,10 @@ function hideJustBetGame() {
 			var bet = result.rows[i];
 			if (p != bet.player)
 				continue;
-			
+
 			$("#tobet" + bet.idgame).html(
 					"<p><b>Bet at: </b>" + bet.created_at + "</p>" +
-					"<p><b>Amount: " + bet.value + "</p>" + 
+					"<p><b>Amount: " + bet.value + "</p>" +
 					"<p><h3>" + bet.score1 + "X" + bet.score2 + "</h3></p>");
 		}
 
@@ -172,7 +172,7 @@ function hideJustBetGame() {
 		}
 	        setTimeout(hideJustBetGame, 5000);
 	});
-	
+
 }
 
 function updateClaimPanel() {
@@ -206,7 +206,26 @@ function updateClaimPanel() {
 }
 
 function claim() {
-       	
+  console.log("claim");
+
+  var p = getCurrentAccount();
+  signAndPush({
+        account: 'ctgbarbeting',
+        name: 'claim',
+        authorization: [{
+          actor: p,
+          permission: 'active'
+        }],
+        data: { name: p }
+      })
+		.then(result => {
+			console.log(result);
+      updateClaimPanel();
+			hideJustBetGame();
+		})
+		.catch(exception => {
+			alert("Claim error");
+		});
 }
 
 	</script>
