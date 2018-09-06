@@ -14,3 +14,5 @@ cleos -u http://${NODE_EOS}:8800 get table eosmsg player1 message -l 100
 echo "MESSAGES player2"
 cleos -u http://${NODE_EOS}:8800 get table eosmsg player2 message -l 100
 
+echo "games"
+cleos -u http://${NODE_EOS}:8800 --wallet-url http://${NODE_EOS}:${PORT} get table ctgbarbeting ctgbarbeting game
