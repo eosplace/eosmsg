@@ -17,6 +17,9 @@
 
 		<div class="container-fluid">
 			<br/>
+
+      <h3>My Balance: <span id="mybalance">0.0000 EOS</span></h3>
+
 			<!-- Claim regawards -->
 			<div class="row"  id="divclaim" style="display:none;">
 				<div class="col-10 offset-1">
@@ -49,7 +52,7 @@
 	<script>
 $(document).ready(function() {
 	initGameList();
-        updateClaimPanel();
+  updatePanels();
 });
 	</script>
 
@@ -175,8 +178,15 @@ function hideJustBetGame() {
 
 }
 
-function updateClaimPanel() {
+function updatePanels() {
 	var p = getCurrentAccount();
+
+  eos.getCurrencyBalance("eosio.token", p)
+    .then(result => {
+      console.log(result);
+      $("#mybalance").html(result[0]);
+    });
+
 	eos.getTableRows({
 		"json": true,
 		"scope": contract_account,
@@ -195,12 +205,12 @@ function updateClaimPanel() {
 			$("#divclaim").show();
 		}
 
-	        setTimeout(updateClaimPanel, 5000);
+    setTimeout(updatePanels, 5000);
 	}).catch(function(exception) {
 		if (exception) {
 			alert(exception);
 		}
-	        setTimeout(updateClaimPanel, 5000);
+    setTimeout(updatePanels, 5000);
 	});
 
 }
@@ -220,7 +230,7 @@ function claim() {
       })
 		.then(result => {
 			console.log(result);
-      updateClaimPanel();
+      updatePanels();
 			hideJustBetGame();
 		})
 		.catch(exception => {
