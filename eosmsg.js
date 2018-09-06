@@ -1,5 +1,10 @@
-function signAndPush(contract, action) {
-	alert("action " + contract + " - " +action);
+function signAndPush(action) {
+	var tevent = new CustomEvent('signAndPush', {detail: {action: action}});
+
+	window.eosaction = "";
+	var promisse = window.parent.dispatchEvent(tevent);
+
+	return window.eosaction;
 }
 
 function adjustIFrameHeigth(h) {

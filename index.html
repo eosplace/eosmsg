@@ -1039,25 +1039,44 @@ function installDApp(url) {
 	});
 }
 
+
+/////////////////////////////////////////////////////////
+//                  API
+/////////////////////////////////////////////////////////
+
+  window.addEventListener('signAndPush', function(e) {
+    let promisse = new Promise(function(resolve, reject) {
+        eos.transaction({actions: [ e.detail.action ]}).then(result => {
+          resolve(result);
+        }).catch(function(exception) {
+          if (exception) {
+            reject(Error("Transfer Error"));
+          }
+        });
+    });
+
+    return  $("iframe")[0].contentWindow.eosaction = promisse;
+  });
+
 window.addEventListener('transfer', function(e) {
 	$("#transferFrom").html(accountname);
 	$("#transferTo").html(e.detail.to);
 	$("#transferAmount").html(e.detail.amount);
 	$("#transferMemo").html(e.detail.memo);
-        $("#transferModal").modal("open");
+  $("#transferModal").modal("open");
 
 
 	$("#btnDenyTransfer").click(function () {
 		$("#transferModal").modal("close");
 	});
 
-	let promisse = new Promise(function(resolve, reject) {	
+  let promisse = new Promise(function(resolve, reject) {
 		$("#btnAcceptTransfer").click(function () {
 			eos.transfer(accountname, e.detail.to, e.detail.amount, e.detail.memo ).then(result => {
 				resolve(result);
 			}).catch(function(exception) {
 				if (exception) {
-				reject(Error("Transfer Error"));	
+				reject(Error("Transfer Error"));
 				}
 			});
 		});
@@ -1071,15 +1090,15 @@ window.addEventListener('adjustIFrameHeight', function(e) {
 });
 
 window.addEventListener('getCurrentAccount', function(e) {
-	return  $("iframe")[0].contentWindow.eosaccountname = accountname; 
+	return  $("iframe")[0].contentWindow.eosaccountname = accountname;
 });
 
 window.addEventListener('getEOSHttpEndpoint', function(e) {
-	return  $("iframe")[0].contentWindow.eoshttpendpoint = eosconfig.httpEndpoint; 
+	return  $("iframe")[0].contentWindow.eoshttpendpoint = eosconfig.httpEndpoint;
 });
 
 window.addEventListener('getEOSChainID', function(e) {
-	return  $("iframe")[0].contentWindow.eoschainid = eosconfig.chainId; 
+	return  $("iframe")[0].contentWindow.eoschainid = eosconfig.chainId;
 });
 
 function stopIFrame() {
