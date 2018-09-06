@@ -252,31 +252,50 @@
         </div>
 
         <!-- DApp view -->
-	<div class="view" id="dappView" style="display:none;">
-	    <br/>
-	    <div id="divappiframe" class="row">
-	       <iframe id="appiframe" style="border: 0px;"></iframe>
-	    </div>
-            
-	    <!-- Modal Structure -->
-            <div id="transferModal" class="modal bottom-sheet">
-                <div class="modal-content">
-                    <h4>Transfer</h4>
-		    <p>The DApp is trying make a transfer from your account</p>
-		    <table class="striped">
-			    <tr><td>From</td><td><span id="transferFrom"></span></td></tr>
-			    <tr><td>To</td><td><span id="transferTo"></span></td></tr>
-			    <tr><td>Amount</td><td><span id="transferAmount"></span></td></tr>
-			    <tr><td>Memo</td><td><span id="transferMemo"></span></td></tr>
-		    </table>
-                </div>
-                <div class="modal-footer">
-                    <a id="btnAcceptTransfer" class="modal-close waves-effect waves-green btn-flat">Accept</a>
-                    <a id="btnDenyTransfer" class="modal-close waves-effect waves-green btn-flat">Deny</a>
-                </div>
+        <div class="view" id="dappView" style="display:none;">
+          <br/>
+          <div id="divappiframe" class="row">
+            <iframe id="appiframe" style="border: 0px;"></iframe>
+          </div>
+
+          <!-- Modal Structure Transfer -->
+          <div id="transferModal" class="modal bottom-sheet">
+            <div class="modal-content">
+              <h4>Transfer</h4>
+              <p>The DApp is trying make a transfer from your account</p>
+              <table class="striped">
+                <tr><td>From</td><td><span id="transferFrom"></span></td></tr>
+                <tr><td>To</td><td><span id="transferTo"></span></td></tr>
+                <tr><td>Amount</td><td><span id="transferAmount"></span></td></tr>
+                <tr><td>Memo</td><td><span id="transferMemo"></span></td></tr>
+              </table>
             </div>
+            <div class="modal-footer">
+              <a id="btnAcceptTransfer" class="modal-close waves-effect waves-green btn-flat">Accept</a>
+              <a id="btnDenyTransfer" class="modal-close waves-effect waves-green btn-flat">Deny</a>
+            </div>
+          </div>
+
+          <!-- Modal Structure Action -->
+          <div id="actionModal" class="modal bottom-sheet">
+            <div class="modal-content">
+              <h4>Action</h4>
+              <p>The DApp is trying make a action from your account</p>
+              <table class="striped">
+                <tr><td>Contract</td><td><span id="actionContract"></span></td></tr>
+                <tr><td>Action</td><td><span id="actionAction"></span></td></tr>
+                <tr><td>Authorization</td><td><span id="actionAuthorization"></span></td></tr>
+                <tr><td>Data</td><td><span id="actionData"></span></td></tr>
+              </table>
+            </div>
+            <div class="modal-footer">
+              <a id="btnAcceptAction" class="modal-close waves-effect waves-green btn-flat">Accept</a>
+              <a id="btnDenyAction" class="modal-close waves-effect waves-green btn-flat">Deny</a>
+            </div>
+          </div>
+
         </div>
-	
+
 	<!-- Suggestions dapps -->
 	<div class="view" id="suggestionsView" style="display:none;">
 		<br/>
@@ -337,6 +356,7 @@
         $('.sidenav').sidenav();
         $('#addContactModal').modal();
         $('#transferModal').modal();
+        $('#actionModal').modal();
         loadGlobals();
         initApp();
     });
@@ -1045,7 +1065,17 @@ function installDApp(url) {
 /////////////////////////////////////////////////////////
 
   window.addEventListener('signAndPush', function(e) {
+    console.log("SignAndPush");
+    console.log(e);
+
+    $("#actionContract").html(e.detail.action.account);
+    $("#actionAction").html(e.detail.action.name);
+    $("#actionAuthorization").html(JSON.stringify(e.detail.action.authorization));
+    $("#actionData").html(JSON.stringify(e.detail.action.data));
+    $("#actionModal").modal("open");
+
     let promisse = new Promise(function(resolve, reject) {
+      $("#btnAcceptAction").click(function () {
         eos.transaction({actions: [ e.detail.action ]}).then(result => {
           resolve(result);
         }).catch(function(exception) {
@@ -1053,6 +1083,7 @@ function installDApp(url) {
             reject(Error("Transfer Error"));
           }
         });
+      });
     });
 
     return  $("iframe")[0].contentWindow.eosaction = promisse;
