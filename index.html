@@ -15,14 +15,14 @@
     <!--Import Google Icon Font-->
     <style>
         /* fallback */
-        
+
         @font-face {
             font-family: 'Material Icons';
             font-style: normal;
             font-weight: 400;
             src: url(/fonts/fontsdownloads.woff2) format('woff2');
         }
-        
+
         .material-icons {
             font-family: 'Material Icons';
             font-weight: normal;
@@ -38,16 +38,16 @@
             -moz-font-feature-settings: 'liga';
             -moz-osx-font-smoothing: grayscale;
         }
-        
+
         nav {
             background-color: #215968;
         }
-        
+
         .btn,
         .btn-large {
             background-color: #338968;
         }
-        
+
         .brand-logo {
             margin-left: 40px;
         }
@@ -62,7 +62,7 @@
 				<a href="#!" class="brand-logo">EOSMsg</a>
 				<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
 				<ul class="right hide-on-med-and-down">
-					<li><a href="javascript:gotoView('contactsView');">Messages</a></li>
+					<li><a href="javascript:gotoView('contactsView');">Messages<span class="new badge red navBadgetMsgs" style="display:none;">0</span></a></li>
 					<li><a href="javascript:gotoView('dappsView');">DApps</a></li>
 					<!-- <li><a href="javascript:gotoView('settingsView');">Settings</a></li>
           <li><a href="#">Lock</a></li> -->
@@ -71,7 +71,7 @@
 		</nav>
 
 		<ul class="sidenav" id="mobile-demo">
-			<li><a href="javascript:gotoView('contactsView');">Messages</a></li>
+			<li><a href="javascript:gotoView('contactsView');">Messages<span class="new badge red navBadgetMsgs" style="display:none;">0</span></a></li>
 			<li><a href="javascript:gotoView('dappsView');">DApps</a></li>
 			<!-- <li><a href="javascript:gotoView('settingsView');">Settings</a></li>
       <li><a href="#">Lock</a></li> -->
@@ -166,7 +166,7 @@
             </div>
 
             <div id="msgNoContacts"  class="card-panel grey">
-               Your contact list is empty. Use the plus button to add your contacts.		    
+               Your contact list is empty. Use the plus button to add your contacts.
 	    </div>
 
             <!-- Modal Structure -->
@@ -191,11 +191,11 @@
         <div class="view" id="conversationView" style="display:none;">
 	    <br/>
  	    <a class="waves-effect waves-light btn-small" id="btnConversationBack">Back</a>
-	    
+
 	    <div id="toinfo" class="row" style="display:none;"></div>
-            
+
 	    <h5 id="conversationTitle">Conversation</h5>
-            
+
 	    <div class="row">
                 <div class="input-field col s10 m10">
                     <input id="inputSend" type="text" class="validate">
@@ -215,7 +215,7 @@
             <h3>Storage is not supported by you browser. Sorry!</h3>
         </div>
 
-        
+
 	<!-- DApps view -->
         <div class="view" id="dappsView" style="display:none;">
 	    <div id="listDApps" class="row">
@@ -401,7 +401,6 @@ var dapps = [];
 var accountname = "";
 var currentDApp = "";
 var currentTo = "";
-var totalUnreadMessages = 0;
 
 function loadGlobals() {
 	var strTbContacts = localStorage.getItem("tbContacts");
@@ -447,7 +446,7 @@ function loadContentInIFrame(content){
 
 function loadRemoteInIFrame(url){
 	loadContentInIFrame("");
-	$("#appiframe").attr('src',url);   
+	$("#appiframe").attr('src',url);
 }
 
 function renderNoop() {}
@@ -460,9 +459,9 @@ function renderContacts() {
 
 function renderAccountInfoCardOn(acc, div) {
 	$("#" + div).hide();
-	eos.getAccount(acc).then(res => { 
+	eos.getAccount(acc).then(res => {
 		console.log(res);
-		$("#" + div).html(			    
+		$("#" + div).html(
 				"<div class='col s12 m12'>" +
 				"    <div class='card blue-grey darken-1'>" +
 				"        <div class='card-content white-text'> " +
@@ -571,7 +570,7 @@ function renderDApps () {
 
 		var strapp = localStorage.getItem(kapp);
 		app = JSON.parse(strapp);
-		if (dapps == null) {			
+		if (dapps == null) {
 		        M.toast({html: "Error loading " + kapp});
 			continue;
 		}
@@ -722,7 +721,7 @@ function handleUnlock() {
 
 	bfish = new Blowfish(pass);
 	var decrypted = bfish.decrypt(keyprivenc);
-	eoskeypriv = bfish.trimZeros(decrypted); // for string/text information 
+	eoskeypriv = bfish.trimZeros(decrypted); // for string/text information
 
 	if (!ecc.isValidPrivate(eoskeypriv)) {
 		$("#passUnlock").val("");
@@ -753,10 +752,10 @@ function writeListContacts() {
 		var con = tbContacts[i];
 		var unread = tbContacts[i].unread;
 
-		if (unread == undefined) { 
+		if (unread == undefined) {
 			$("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "</a>");
 		} else {
-			$("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "<span class='new badge red'>" + unread +  "</span> </a>");
+			$("#listContacts").append("<a href='javascript:openConversation(" + i + ")' class='collection-item'>" + con.Name + "<span class='new badge red badgelist'>" + unread +  "</span> </a>");
 		}
 	}
 }
@@ -802,7 +801,6 @@ $("#btnSuggestionsBack").click(function() {
 function openConversation(id) {
 	var contact = tbContacts[id];
 	currentTo = contact.Name;
-  totalUnreadMessages -= tbContacts[id].unread;
 	delete tbContacts[id].unread;
 	localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
 
@@ -905,8 +903,6 @@ function processMessageNotify(idxcon, idxmsg){
 		tbContacts[idxcon].Messages[idxmsg].type = result.rows[0].type;
 		tbContacts[idxcon].Messages[idxmsg].state = "read";
 
-    totalUnreadMessages ++;
-
 		if (tbContacts[idxcon].unread == undefined) {
 			tbContacts[idxcon].unread = 1;
 		} else {
@@ -926,11 +922,26 @@ function refreshPanels() {
 	renderConversation();
 }
 
+function updateNav() {
+  var bl = $(".badgelist");
+
+  var total = 0;
+  for (var i = 0; i < bl.length; i++) {
+    total += parseInt(bl[i].innerText);
+  }
+
+  if (total == 0) {
+    $(".navBadgetMsgs").hide();
+  } else {
+    $(".navBadgetMsgs").html("" + total);
+    $(".navBadgetMsgs").show();
+  }
+}
+
 function processMessage() {
 	console.log("processMessage");
 	loadGlobals();
-
-  totalUnreadMessages = 0;
+  updateNav();
 
   for (var i in tbContacts) {
 		var con = tbContacts[i];
@@ -1020,7 +1031,7 @@ function getMessagesToMe() {
 
 					var idx = ContactName2IDX(from);
 
-					tbContacts[idx].Messages.push({ 
+					tbContacts[idx].Messages.push({
 						id: idmsg,
 						from: from,
 						state: "notify",
