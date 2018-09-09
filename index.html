@@ -383,10 +383,10 @@ chain = {
   Other httpEndpoint's: https://www.eosdocs.io/resources/apiendpoints
  */
 eosconfig = {
-	///httpEndpoint: 'http://192.168.0.105:8800',
-	///chainId: chain.sysnet,
-	httpEndpoint: 'https://mainnet.eoscanada.com',
-	chainId: chain.mainnet,
+	httpEndpoint: 'http://192.168.0.105:8800',
+	chainId: chain.sysnet,
+	///httpEndpoint: 'https://mainnet.eoscanada.com',
+	///chainId: chain.mainnet,
 	broadcast: true,
 	keyProvider: "",
 	verbose: false,
@@ -1075,8 +1075,10 @@ function installDApp(url) {
     $("#actionModal").modal("open");
 
     let promisse = new Promise(function(resolve, reject) {
+      $("#btnAcceptAction").unbind();
       $("#btnAcceptAction").click(function () {
         eos.transaction({actions: [ e.detail.action ]}).then(result => {
+          $("#transferModal").modal("close");
           resolve(result);
         }).catch(function(exception) {
           if (exception) {
@@ -1090,50 +1092,52 @@ function installDApp(url) {
   });
 
 window.addEventListener('transfer', function(e) {
-	$("#transferFrom").html(accountname);
-	$("#transferTo").html(e.detail.to);
-	$("#transferAmount").html(e.detail.amount);
-	$("#transferMemo").html(e.detail.memo);
+  $("#transferFrom").html(accountname);
+  $("#transferTo").html(e.detail.to);
+  $("#transferAmount").html(e.detail.amount);
+  $("#transferMemo").html(e.detail.memo);
   $("#transferModal").modal("open");
 
 
-	$("#btnDenyTransfer").click(function () {
-		$("#transferModal").modal("close");
-	});
+  ///$("#btnDenyTransfer").click(function () {
+  ///  $("#transferModal").modal("close");
+  ///});
 
   let promisse = new Promise(function(resolve, reject) {
-		$("#btnAcceptTransfer").click(function () {
-			eos.transfer(accountname, e.detail.to, e.detail.amount, e.detail.memo ).then(result => {
-				resolve(result);
-			}).catch(function(exception) {
-				if (exception) {
-				reject(Error("Transfer Error"));
-				}
-			});
-		});
-	});
+    $("#btnAcceptTransfer").unbind();
+    $("#btnAcceptTransfer").click(function () {
+      eos.transfer(accountname, e.detail.to, e.detail.amount, e.detail.memo ).then(result => {
+        $("#transferModal").modal("close");
+        resolve(result);
+      }).catch(function(exception) {
+        if (exception) {
+          reject(Error("Transfer Error"));
+        }
+      });
+    });
+  });
 
-	return  $("iframe")[0].contentWindow.eostransfer = promisse;
+  return  $("iframe")[0].contentWindow.eostransfer = promisse;
 });
 
 window.addEventListener('adjustIFrameHeight', function(e) {
-	$("iframe")[0].style.height = e.detail.height +'px';
+  $("iframe")[0].style.height = e.detail.height +'px';
 });
 
 window.addEventListener('getCurrentAccount', function(e) {
-	return  $("iframe")[0].contentWindow.eosaccountname = accountname;
+  return  $("iframe")[0].contentWindow.eosaccountname = accountname;
 });
 
 window.addEventListener('getEOSHttpEndpoint', function(e) {
-	return  $("iframe")[0].contentWindow.eoshttpendpoint = eosconfig.httpEndpoint;
+  return  $("iframe")[0].contentWindow.eoshttpendpoint = eosconfig.httpEndpoint;
 });
 
 window.addEventListener('getEOSChainID', function(e) {
-	return  $("iframe")[0].contentWindow.eoschainid = eosconfig.chainId;
+  return  $("iframe")[0].contentWindow.eoschainid = eosconfig.chainId;
 });
 
 function stopIFrame() {
-	loadContentInIFrame("blank");
+  loadContentInIFrame("blank");
 }
 
 </script>
