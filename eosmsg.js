@@ -7,7 +7,7 @@ function signAndPush(action) {
 	return window.eosaction;
 }
 
-function adjustIFrameHeigth(h) {
+function adjustIFrameHeight(h) {
 	var tevent = new CustomEvent('adjustIFrameHeight', {detail: {height: h}});
 
 	window.parent.dispatchEvent(tevent);
