@@ -383,10 +383,10 @@ chain = {
   Other httpEndpoint's: https://www.eosdocs.io/resources/apiendpoints
  */
 eosconfig = {
-	///httpEndpoint: 'http://192.168.0.105:8800',
-	///chainId: chain.sysnet,
-	httpEndpoint: 'https://mainnet.eoscanada.com',
-	chainId: chain.mainnet,
+	httpEndpoint: 'http://192.168.0.105:8800',
+	chainId: chain.sysnet,
+	///httpEndpoint: 'https://mainnet.eoscanada.com',
+	///chainId: chain.mainnet,
 	broadcast: true,
 	keyProvider: "",
 	verbose: false,
@@ -1152,6 +1152,15 @@ window.addEventListener('getEOSHttpEndpoint', function(e) {
 window.addEventListener('getEOSChainID', function(e) {
   return  $("iframe")[0].contentWindow.eoschainid = eosconfig.chainId;
 });
+
+window.addEventListener('getPublicKey', function(e) {
+	var keypub = localStorage.getItem("keypub");
+  return  $("iframe")[0].contentWindow.publickey = keypub;
+});
+
+///window.addEventListener('getEOSChainID', function(e) {
+///  return  $("iframe")[0].contentWindow.eoschainid = eosconfig.chainId;
+///});
 
 function stopIFrame() {
   loadContentInIFrame("blank");

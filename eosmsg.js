@@ -49,3 +49,12 @@ function getEOSChainID() {
 	return window.eoschainid;
 }
 
+function getPublicKey() {
+	var tevent = new CustomEvent('getPublicKey', {detail: {}});
+
+	window.publickey = "";
+	window.parent.dispatchEvent(tevent);
+
+	return window.publickey;
+}
+
