@@ -1,0 +1,12 @@
+{
+	"key": "simplewallet", 
+	"name" : "SimpleWallet",
+        "description" : "Simple EOS Wallet",
+        "author" : "eos.place",
+        "contenturl" : "simplewallet.html",
+        "image" : "https://cdn.shopify.com/s/files/1/0012/7510/1295/products/cowather_simple_wallet_1_300x300.jpg?v=1531010324",
+        "dappversion" : "0.1",
+        "version" : 1,
+        "support": true,
+        "remote" : true
+}
