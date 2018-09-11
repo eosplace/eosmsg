@@ -1158,9 +1158,12 @@ window.addEventListener('getPublicKey', function(e) {
   return  $("iframe")[0].contentWindow.publickey = keypub;
 });
 
-///window.addEventListener('getEOSChainID', function(e) {
-///  return  $("iframe")[0].contentWindow.eoschainid = eosconfig.chainId;
-///});
+window.addEventListener('openLink', function(e) {
+  var url = e.detail.url;
+  var target = e.detail.target;
+
+  window.open(url, target);
+});
 
 function stopIFrame() {
   loadContentInIFrame("blank");

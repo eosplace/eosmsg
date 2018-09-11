@@ -58,3 +58,8 @@ function getPublicKey() {
 	return window.publickey;
 }
 
+function openLink(purl, ptarget) {
+	var tevent = new CustomEvent('openLink', {detail: {url: purl, target: ptarget}});
+
+	window.parent.dispatchEvent(tevent);
+}
