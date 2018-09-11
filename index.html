@@ -307,7 +307,8 @@
 			<div class="col s6 m4">
 				<div class="card">
 					<div class="card-image waves-effect waves-block waves-light">
-						<img class="activator" src="https://www.revelacoes.net/wp-content/uploads/2018/02/o-aviso-1.png" >
+					        <img class="activator" src="https://www.revelacoes.net/wp-content/uploads/2018/02/o-aviso-1.png" >
+					        <span class="card-title red">Not integrated</span>
 					</div>
 						<div class="card-content">
 							<span class="card-title activator grey-text text-darken-4" style='font-size: 16px;'>EOSFlare</span>
@@ -324,7 +325,7 @@
 			<div class="col s6 m4">
 				<div class="card">
 					<div class="card-image waves-effect waves-block waves-light">
-						<img class="activator" src="http://www.montanascreensavers.com/wp-content/uploads/2018/03/Football-Match-Prediction-300x300.jpg" >
+					        <img class="activator" src="http://www.montanascreensavers.com/wp-content/uploads/2018/03/Football-Match-Prediction-300x300.jpg" >
 					</div>
 					<div class="card-content">
 						<span class="card-title activator grey-text text-darken-4" style='font-size: 16px;'>Simple Game</span>
@@ -383,10 +384,10 @@ chain = {
   Other httpEndpoint's: https://www.eosdocs.io/resources/apiendpoints
  */
 eosconfig = {
-	///httpEndpoint: 'http://192.168.0.105:8800',
-	///chainId: chain.sysnet,
-	httpEndpoint: 'https://mainnet.eoscanada.com',
-	chainId: chain.mainnet,
+	httpEndpoint: 'http://192.168.0.105:8800',
+	chainId: chain.sysnet,
+	///httpEndpoint: 'https://mainnet.eoscanada.com',
+	///chainId: chain.mainnet,
 	broadcast: true,
 	keyProvider: "",
 	verbose: false,
@@ -579,7 +580,8 @@ function renderDApps () {
 				"<div class='col s6 m4 installed'> " +
 				"   <div class='card'>"+
 				"      <div class='card-image waves-effect waves-block waves-light'>" +
-				"            <img class='activator' src='" + app.image + "' >" +
+	                        "            <img class='activator' src='" + app.image + "' >" +
+                                (app.support?"":"            <span class='card-title red'>Not integrated</span>") +
 				"       </div>" +
 				"       <div class='card-content'>" +
 				"            <span class='card-title activator grey-text text-darken-4'  style='font-size: 16px;'>" + app.name + "</span>" +
