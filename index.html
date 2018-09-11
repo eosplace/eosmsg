@@ -316,8 +316,8 @@
 							<span class="card-title grey-text text-darken-4">EOSFlare<i class="material-icons right">close</i></span>
 							<p>A EOS network monitor.</p>
 						</div>
-						<div class="card-action eosflare installAction" >
-							<a href="javascript:installDApp('eosflare.json')">install</a>
+						<div class="card-action installAction" >
+							<a class="eosflare" href="javascript:installDApp('eosflare.json')">Install</a>
 						</div>
 				</div>
 			</div>
@@ -333,8 +333,8 @@
 						<span class="card-title grey-text text-darken-4">GoalbarClub Simple Game<i class="material-icons right">close</i></span>
 						<p>A simple game to bet in soccer scores</p>
 					</div>
-					<div class="card-action goalbarbeting installAction" >
-						<a href="javascript:installDApp('goalbarbeting.json')">install</a>
+					<div class="card-action installAction" >
+						<a class="goalbarbeting" href="javascript:installDApp('goalbarbeting.json')">Install</a>
 					</div>
 				</div>
 			</div>
@@ -601,7 +601,7 @@ function renderDApps () {
 function renderSuggestions() {
 	$(".installAction").show();
 	for(var i in dapps) {
-		$("."+dapps[i]).hide();
+		$("."+dapps[i]).html("Reinstall");
 	}
 }
 
@@ -1050,20 +1050,27 @@ function getMessagesToMe() {
 	setTimeout(getMessagesToMe, 5000);
 }
 
-
 function installDApp(url) {
 	$("#barprogress").show();
 	$.getJSON(url)
 		.done(function( json ) {
 			console.log( json );
-
 			localStorage.setItem(json.key, JSON.stringify(json));
 
-			dapps.push(json.key);
-		        localStorage.setItem("DApps", JSON.stringify(dapps));
+                        var justInstalled = false;
+                        for (var i = 0; i < dapps.length; i++) {
+			  if (dapps[i] == json.key) {
+			     justInstalled = true;
+			  }
+		        }
+			 		    
+                        if (! justInstalled) {
+                            dapps.push(json.key);                        
+                            localStorage.setItem("DApps", JSON.stringify(dapps));
+                        }
 
-	                $("#barprogress").hide();
-		        $("."+json.key).hide();
+                        $("#barprogress").hide();
+                        $("."+json.key).html("Reinstall");
 		})
 	.fail(function( jqxhr, textStatus, error ) {
 		var err = textStatus + ", " + error;
