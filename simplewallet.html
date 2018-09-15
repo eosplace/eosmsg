@@ -12,8 +12,35 @@
   </head>
   <body>    
     <div class="container-fluid">
-      <h1>Balance: <span id="balance"></span></h1>
 
+
+      <div class="jumbotron jumbotron-fluid">
+	<div class="container">
+	  <h1>Your balance is: <span id="balance"></span></h1>
+	</div>
+      </div>
+      <hr/>
+      <h3>You can use that form to make transfers</h3>
+      <form>
+	<div class="form-row">
+	  <div class="form-group col-md-6">
+	    <label for="inputTo">To:</label>
+	    <input type="text" class="form-control" id="inputTo" placeholder="To">
+	  </div>
+	  <div class="form-group col-md-6">
+	    <label for="inputAmount">Amount (example: "1.0000 EOS"):</label>
+	    <input type="text" class="form-control" id="inputAmount" placeholder="Amount">
+	  </div>
+	</div>
+	<div class="form-group">
+	  <label for="inputMemo">Memo:</label>
+	  <input type="text" class="form-control" id="inputMemo" placeholder="Memo">
+	</div>
+	<a id="btnTransfer" class="btn btn-primary">Transfer</a>
+      </form>
+
+      <hr/>
+      <h3>All your transactions can be checked using the <a id="linkEOSFlare" href="#">EOSFlare!</a></h3>
       
     </div>
     
@@ -27,6 +54,7 @@
   
   <script>
     $(document).ready(function() {
+	updateBalance();
     });
 
     //// EOS ////////////
@@ -45,7 +73,39 @@
 	verbose: false,
     };
     
-    eos = Eos(eosconfig);    
+    eos = Eos(eosconfig);
+
+    function updateBalance() {
+	var p = getCurrentAccount();
+	
+	eos.getCurrencyBalance("eosio.token", p)
+	    .then(result => {
+		console.log(result);
+		$("#balance").html(result[0]);
+	    });
+
+	setTimeout(updateBalance, 10000);
+    }
+
+    $("#btnTransfer").click(function() {
+	var to = $("#inputTo").val();
+	var amount = $("#inputAmount").val();
+	var memo = $("#inputMemo").val();
+
+	transfer(to, amount, memo)
+	    .then(result => {
+		alert("Transfer successs");
+	    })
+	    .catch(exception => {
+		alert(exception);
+	    });
+
+    });
+
+    $("#linkEOSFlare").click(function() {
+	var acc = getCurrentAccount();
+	openLink("https://eosflare.io/account/" + acc, "_blank");
+    });
   </script>
   
 </html>
