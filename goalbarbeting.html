@@ -263,9 +263,9 @@ function initGameList() {
 					"      <h5 class='card-title'>" + g.description + " (" + g.fee + " %) </h5>"+
 					" <div id='tobet" + g.id + "'>"+
 					"	   <p class='card-text'><b>Min:</b> " + g.value_min + " <b>Max:</b> " + g.value_max + "</p>"+
-					"       <label for='amount"+ i +"'>Amount: <span id='valbet" + i + "'>" + Min / 10000 + "</span> EOS</label>"+
-					"       <input type='range' class='custom-range' min='" + Min +"' max='" + Max+ "' step='" + Step + "' id='amount" + i + "' value='" + Min + "'" + 
-					" onchange='var v = $(\"\#amount\" + " + i + ").val(); $(\"\#valbet\" + " + i + ").html(v/10000); " +
+					"       <label for='amount"+ i +"'>Amount: <span id='valbet" + g.id + "'>" + Min / 10000 + "</span> EOS</label>"+
+					"       <input type='range' class='custom-range' min='" + Min +"' max='" + Max+ "' step='" + Step + "' id='amount" + g.id + "' value='" + Min + "'" +
+					" onchange='var v = $(\"\#amount\" + " + g.id + ").val(); $(\"\#valbet\" + " + g.id + ").html(v/10000); " +
 					"'>"+
 					"  <p> "+g.team1+ " <input type='number' value='0' id='oscore" + g.id + "'>  X <input type='number' value='0' id='tscore" + g.id + "'> " + g.team2 + "</p>" +
 
