@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-
   </head>
 
   <body>
@@ -199,11 +198,10 @@
 
         </div>
       </div>
-
-
+      
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/eosjs@16.0.0/lib/eos.min.js" integrity="sha512-vNyLnOEb7uFmEtVbLnyZQ9/k4zckM2Vu3jJOKq6XfWEVZG0yKcjDExVN4EQ7e3F+rePWRncMolI2xFi/3qo62A==" crossorigin="anonymous"></script>
@@ -269,8 +267,9 @@ function initGameList() {
 					"'>"+
 					"  <p> "+g.team1+ " <input type='number' value='0' id='oscore" + g.id + "'>  X <input type='number' value='0' id='tscore" + g.id + "'> " + g.team2 + "</p>" +
 
-					"<a class='btn btn-primary btn-lg' href='javascript:bet(" + g.id + ");' role='button' >Bet</a> " +
-
+					"<a class='btn btn-primary btn-lg' href='javascript:bet(" + g.id + ");' role='button'><i class='fas fa-trophy'></i> Bet</a> " +
+					"<a class='btn btn-info btn-lg' href='javascript:showStats(" + g.id + ");' role='button'><i class='fas fa-chart-bar'></i> Stats</a> " +
+					       
 					" </div>" +
 					"   </div> "+
 					"   <div class='card-footer text-muted'> "+
@@ -326,7 +325,8 @@ function hideJustBetGame() {
 			$("#tobet" + bet.idgame).html(
 					"<p><b>Bet at: </b>" + bet.created_at + "</p>" +
 					"<p><b>Amount: " + bet.value + "</p>" +
-					"<p><h3>" + bet.score1 + "X" + bet.score2 + "</h3></p>");
+				        "<p><h3>My bet: " + bet.score1 + "X" + bet.score2 + "</h3></p>" +
+			                "<a class='btn btn-info btn-lg' href='javascript:showStats(" + bet.idgame + ");' role='button'><i class='fas fa-chart-bar'></i> Stats</a> ");
 		}
 
 		adjustIFrameHeight(document.body.scrollHeight);
@@ -398,6 +398,10 @@ function claim() {
 		.catch(exception => {
 			alert("Claim error");
 		});
+}
+
+function showStats(id) {
+    	  openLink("http://www.goalbarclub.org/sgstatsmain/game/" + id, '_blank');
 }
 
 	</script>
