@@ -238,9 +238,24 @@
 	  </div>
 	</div>
 	
+        <!-- Modal Structure -->
+        <div id="addDAppModal" class="modal">
+          <div class="modal-content">
+            <h4>New DApp</h4>
+            <div class="row">
+              <div class="input-field col s12">
+                <input id="inputNewDApp" type="text" class="validate">
+                <label for="inputNewDApp">URL to DApp</label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a href="javascript:addNewDApp()" class="modal-close waves-effect waves-green btn-flat">Add</a>
+          </div>
+        </div>
 	
         <div class="fixed-action-btn">
-          <a class="btn-floating btn-large waves-effect waves-light red modal-trigger" href="#addDapp">
+          <a class="btn-floating btn-large waves-effect waves-light red modal-trigger" href="#addDAppModal">
             <i class="large material-icons">add</i>
           </a>
         </div>
@@ -370,13 +385,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/eosjs@16.0.0/lib/eos.min.js" integrity="sha512-vNyLnOEb7uFmEtVbLnyZQ9/k4zckM2Vu3jJOKq6XfWEVZG0yKcjDExVN4EQ7e3F+rePWRncMolI2xFi/3qo62A==" crossorigin="anonymous"></script>
   
-  
   <script>
     $(document).ready(function() {
 	$('.sidenav').sidenav();
 	$('#addContactModal').modal();
 	$('#transferModal').modal();
 	$('#actionModal').modal();
+	$('#addDAppModal').modal();
 	loadGlobals();
 	initApp();
     });
@@ -801,8 +816,7 @@
 		tbContacts.push(contact);
 		localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
 		
-		writeListContacts();
-		
+		writeListContacts();		
 	    })
 	    .catch(err => {
 		M.toast({
@@ -1092,6 +1106,7 @@
 		
 		$("#barprogress").hide();
 		$("."+json.key).html("Reinstall");
+		renderDApps();
 	    })
 	    .fail(function( jqxhr, textStatus, error ) {
 		var err = textStatus + ", " + error;
@@ -1101,10 +1116,15 @@
 		});
 		
 		$("#barprogress").hide();
+		renderDApps();
 	    });
     }
-    
-    
+
+    function addNewDApp () {
+	var url = $('#inputNewDApp').val();
+	installDApp(url);
+    }
+
     /////////////////////////////////////////////////////////
     //                  API
     /////////////////////////////////////////////////////////
