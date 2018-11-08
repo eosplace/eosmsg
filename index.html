@@ -883,33 +883,41 @@
 	    $("#inputSend").val("");
 	}
     });
-    
+
+
     function processMessageToSend(idxcon, idxmsg) {
 	console.log("STATUS: tosend - " + idxcon, idxmsg);
 	
 	var con = tbContacts[idxcon];
 	var msg = con.Messages[idxmsg];
-	
-	eos.contract(contract_account).then(contract =>
-					    contract.sendmsg({
-						from: accountname,
-						to: currentTo,
-						msg: msg.content,
-					    }, {
-						authorization: accountname
-					    })).then(function() {
-						console.log("OK");
-						tbContacts[idxcon].Messages[idxmsg].state = "sent";
-						
-						localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
-					    }).catch(function(exception) {
-						console.log(exception);
-						/*if (exception) {
-						  M.toast({
-						  html: exception
-						  });
-						  }*/
-					    });
+
+	eos.getAccount(currentTo).then(res => {
+	    var toPubKey = res.permissions[0].required_auth.keys[0].key;
+	    var myPriKey = eosconfig.keyProvider;
+
+	    var encMsg = ecc.Aes.encrypt(myPriKey, toPubKey, msg.content);
+	    
+	    eos.contract(contract_account).then(contract =>
+						contract.sendmsg({
+						    from: accountname,
+						    to: currentTo,
+						    msg: JSON.stringify(encMsg),
+						}, {
+						    authorization: accountname
+						})).then(function() {
+						    console.log("OK");
+						    tbContacts[idxcon].Messages[idxmsg].state = "sent";
+						    
+						    localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+						}).catch(function(exception) {
+						    console.log(exception);
+						    /*if (exception) {
+						      M.toast({
+						      html: exception
+						      });
+						      }*/
+						});	    
+	});
     }
     
     function processMessageRead(idxcon, idxmsg){
@@ -943,18 +951,29 @@
 	    "lower_bound": ID,
 	}).then(result => {
 	    console.log(result);
-	    tbContacts[idxcon].Messages[idxmsg].content = result.rows[0].text;
-	    tbContacts[idxcon].Messages[idxmsg].createdat = result.rows[0].send_at;
-	    tbContacts[idxcon].Messages[idxmsg].type = result.rows[0].type;
-	    tbContacts[idxcon].Messages[idxmsg].state = "read";
-	    
-	    if (tbContacts[idxcon].unread == undefined) {
-		tbContacts[idxcon].unread = 1;
-	    } else {
-		tbContacts[idxcon].unread ++;
-	    }
-	    
-	    localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+
+	    eos.getAccount(from).then(res => {
+		var fromPubKey = res.permissions[0].required_auth.keys[0].key;
+		var myPriKey = eosconfig.keyProvider;
+
+		var encMsgText = result.rows[0].text;
+		var encMsg = JSON.parse(encMsgText);
+		var msg = ecc.Aes.decrypt(fromPubKey, myPriKey, encMsg.nonce, encMsg.message, encMsg.checksum);
+			    
+		tbContacts[idxcon].Messages[idxmsg].content = msg;
+		tbContacts[idxcon].Messages[idxmsg].createdat = result.rows[0].send_at;
+		tbContacts[idxcon].Messages[idxmsg].type = result.rows[0].type;
+		tbContacts[idxcon].Messages[idxmsg].state = "read";
+		
+		if (tbContacts[idxcon].unread == undefined) {
+		    tbContacts[idxcon].unread = 1;
+		} else {
+		    tbContacts[idxcon].unread ++;
+		}
+
+		///TO debug
+		////localStorage.setItem("tbContacts", JSON.stringify(tbContacts));
+	    });
 	}).catch(function(exception) {
 	    if (exception) {
 		alert(exception);
@@ -1225,17 +1244,6 @@
     
     function stopIFrame() {
 	loadContentInIFrame("blank");
-    }
-
-    function encryptMsg(to, msg) {
-	eos.getAccount(to).then(res => {
-	    var toPubKey = res.permissions[0].required_auth.keys[0].key;
-	    var myPriKey = eosconfig.keyProvider;
-
-	    var encMsg = ecc.Aes.encrypt(myPriKey, toPubKey, msg);
-	    
-	    console.log(JSON.stringify(encMsg));
-	});
     }
 
   </script>
