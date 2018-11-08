@@ -1226,7 +1226,18 @@
     function stopIFrame() {
 	loadContentInIFrame("blank");
     }
-    
+
+    function encryptMsg(to, msg) {
+	eos.getAccount(to).then(res => {
+	    var toPubKey = res.permissions[0].required_auth.keys[0].key;
+	    var myPriKey = eosconfig.keyProvider;
+
+	    var encMsg = ecc.Aes.encrypt(myPriKey, toPubKey, msg);
+	    
+	    console.log(JSON.stringify(encMsg));
+	});
+    }
+
   </script>
   
   <script>
