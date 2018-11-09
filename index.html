@@ -959,7 +959,7 @@
 		var encMsgText = result.rows[0].text;
 		var encMsg = JSON.parse(encMsgText);
 		var msg = ecc.Aes.decrypt(fromPubKey, myPriKey, encMsg.nonce, encMsg.message, encMsg.checksum);
-			    
+		
 		tbContacts[idxcon].Messages[idxmsg].content = msg;
 		tbContacts[idxcon].Messages[idxmsg].createdat = result.rows[0].send_at;
 		tbContacts[idxcon].Messages[idxmsg].type = result.rows[0].type;
